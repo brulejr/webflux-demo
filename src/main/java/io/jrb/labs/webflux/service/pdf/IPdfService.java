@@ -25,8 +25,17 @@ package io.jrb.labs.webflux.service.pdf;
 
 import java.io.OutputStream;
 
+/**
+ * Defines the contact for a service that works with PDF documents.
+ */
 public interface IPdfService {
 
+    /**
+     * Creates a PDF document on the given output stream.
+     *
+     * @param documentId the document identifier
+     * @param os the output stream
+     */
     void createDocument(String documentId, OutputStream os);
 
 }

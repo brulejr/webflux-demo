@@ -32,6 +32,9 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.OutputStream;
 
+/**
+ * Provides a concrete implementation of a PDF service using Apache PDFBox.
+ */
 @Slf4j
 public class PdfService implements IPdfService {
 

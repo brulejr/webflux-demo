@@ -35,11 +35,21 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.function.Consumer;
 
+/**
+ * Provides common static methods and functions for dealing with Flux content.
+ */
 @Slf4j
 public final class FluxContentUtils {
 
     private FluxContentUtils() {}
 
+    /**
+     * Facilitates the streaming of content from a custom consumer to a {@link DataBuffer} Flux.
+     *
+     * @param consumer the callback that writes custom content to a given output stream
+     * @param scheduler the scheduler on which this streaming operation should take place
+     * @return a DataBuffer Flux containing the streamed content
+     */
     public static Flux<DataBuffer> streamContent(final Consumer<OutputStream> consumer, final Scheduler scheduler) {
         return Flux.create((FluxSink<DataBuffer> emitter) -> {
             final DefaultDataBuffer dataBuffer = new DefaultDataBufferFactory().allocateBuffer();
