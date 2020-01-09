@@ -26,12 +26,16 @@ package io.jrb.labs.webflux;
 import io.jrb.labs.webflux.config.ApplicationJavaConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication(scanBasePackageClasses = ApplicationJavaConfig.class)
-public class WebfluxDemoApplication {
+public class Application {
 
 	public static void main(final String[] args) {
-		SpringApplication.run(WebfluxDemoApplication.class, args);
+		final SpringApplication application = new SpringApplicationBuilder(Application.class)
+				.headless(true)
+				.build();
+		application.run(args);
 	}
 
 }
