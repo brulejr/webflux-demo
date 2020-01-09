@@ -1,2 +1,15 @@
 server:
   port: 9090
+
+management:
+  endpoints:
+    web:
+      base-path: /admin
+      exposure:
+        include: "*"
+    enabled-by-default: true
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: true
