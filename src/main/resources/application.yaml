@@ -13,3 +13,8 @@ management:
       show-details: always
     shutdown:
       enabled: true
+
+traceability:
+  headers:
+    requestId: x-traceability-request-id
+    duration: x-traceability-duration
