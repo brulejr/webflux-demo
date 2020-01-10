@@ -31,7 +31,11 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
+/**
+ * Provides a web filter that adds traceability data to reactive web service responses.
+ */
 @Slf4j
 public class TraceabilityWebFilter implements WebFilter {
 
@@ -41,6 +45,19 @@ public class TraceabilityWebFilter implements WebFilter {
         this.traceabilityHeaderNames = traceabilityHeaderNames;
     }
 
+    /**
+     * Wraps the given reactive Web request in a block that adds traceability data, including a unique request identifier
+     * and duration, before delegating to the next {@code WebFilter} through the given {@link WebFilterChain}.
+     *
+     * Note that this WebFilter adds a {@code beforeCommit()} hook to the response in order to capture the duration and
+     * inject it into the response headers after the entire chain has completed. It is important to note that using the
+     * {@link Mono#doFinally(Consumer)} block does not work as the response is already committed and the response
+     * headers are readonly at that point.
+     *
+     * @param exchange the current server exchange
+     * @param chain provides a way to delegate to the next filter
+     * @return {@code Mono<Void>} to indicate when request processing is complete
+     */
     @Override
     public Mono<Void> filter(final ServerWebExchange exchange, final WebFilterChain chain) {
         long startTime = System.currentTimeMillis();
