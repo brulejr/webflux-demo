@@ -21,21 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.web;
+package io.jrb.labs.webflux.common.module;
 
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
+import org.slf4j.Logger;
 
-public class GreetingHandler {
+import javax.annotation.PostConstruct;
 
-    public Mono<ServerResponse> hello(final ServerRequest request) {
-        return ServerResponse
-                .ok()
-                .contentType(MediaType.TEXT_PLAIN)
-                .body(BodyInserters.fromValue("Hello, Spring!"));
+import static java.text.MessageFormat.format;
+
+public abstract class ModuleJavaConfigSupport {
+
+    private Logger log;
+    private String moduleName;
+
+    public ModuleJavaConfigSupport(final String moduleName, final Logger log) {
+        this.log = log;
+        this.moduleName = moduleName;
     }
 
+    protected String moduleName() { return moduleName; };
+
+    @PostConstruct
+    public void postConstruct() {
+        log.info(format("Module {0} - LOADED", moduleName));
+    }
 }

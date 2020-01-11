@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.service.pdf;
+package io.jrb.labs.webflux.module.pdf.service;
 
 public class PdfServiceException extends RuntimeException {
 

@@ -21,34 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.web;
+package io.jrb.labs.webflux.module.greeting;
 
-import io.jrb.labs.webflux.common.webflux.RouterConfiguration;
-import io.jrb.labs.webflux.service.pdf.IPdfService;
+import io.jrb.labs.webflux.common.module.ModuleJavaConfigSupport;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.scheduler.Schedulers;
 
-@RouterConfiguration
-public class PdfServiceRouter {
+@Slf4j
+@Configuration
+@ConditionalOnProperty(name = "module.greeting.enabled")
+public class GreetingModuleJavaConfig extends ModuleJavaConfigSupport {
+
+    private static final String MODULE_NAME = "Greeting";
+
+    public GreetingModuleJavaConfig() {
+        super(MODULE_NAME, log);
+    }
 
     @Bean
-    public RouterFunction<ServerResponse> createPdfDocumentEndpoint(final PdfServiceHandler pdfServiceHandler) {
+    public RouterFunction<ServerResponse> greetingEndpoint(final GreetingHandler greetingHandler) {
         return RouterFunctions.route(
                 RequestPredicates
-                        .POST("/pdf/{documentId}")
-                        .and(RequestPredicates.accept(MediaType.APPLICATION_PDF)),
-                pdfServiceHandler::createDocument
+                        .GET("/greet")
+                        .and(RequestPredicates.accept(MediaType.TEXT_PLAIN)),
+                greetingHandler::hello
         );
     }
 
     @Bean
-    public PdfServiceHandler pdfServiceHandler(final IPdfService pdfService) {
-        return new PdfServiceHandler(pdfService, Schedulers.elastic());
-    }
+    public GreetingHandler greetingHandler() { return new GreetingHandler(); }
 
 }

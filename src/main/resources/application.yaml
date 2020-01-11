@@ -18,3 +18,9 @@ traceability:
   headers:
     requestId: x-traceability-request-id
     duration: x-traceability-duration
+
+module:
+  greeting:
+    enabled: true
+  pdf:
+    enabled: true

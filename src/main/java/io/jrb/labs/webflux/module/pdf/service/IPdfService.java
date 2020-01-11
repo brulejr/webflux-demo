@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Jon Brule <brulejr@gmail.com>
+ * Copyright (c) 2020 Jon Brule <brulejr@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,19 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.webflux;
+package io.jrb.labs.webflux.module.pdf.service;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.OutputStream;
 
 /**
- * Provides an annotation for marking reactive router functions for targetted scanning.
+ * Defines the contact for a service that works with PDF documents.
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface RouterConfiguration {
+public interface IPdfService {
+
+    /**
+     * Creates a PDF document on the given output stream.
+     *
+     * @param documentId the document identifier
+     * @param os the output stream
+     */
+    void createDocument(String documentId, OutputStream os);
+
 }

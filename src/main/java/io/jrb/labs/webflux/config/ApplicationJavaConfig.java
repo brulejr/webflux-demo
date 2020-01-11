@@ -25,25 +25,20 @@ package io.jrb.labs.webflux.config;
 
 import io.jrb.labs.webflux.common.web.TraceabilityHeaderNames;
 import io.jrb.labs.webflux.common.web.TraceabilityWebFilter;
-import io.jrb.labs.webflux.common.webflux.RouterConfiguration;
-import io.jrb.labs.webflux.service.pdf.IPdfService;
-import io.jrb.labs.webflux.service.pdf.PdfService;
+import io.jrb.labs.webflux.module.greeting.GreetingModuleJavaConfig;
+import io.jrb.labs.webflux.module.pdf.PdfModuleJavaConfig;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 
 @Configuration
-@ComponentScan(
-        basePackages = "io.jrb.labs.webflux.web",
-        includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, value = RouterConfiguration.class)
-)
 @EnableConfigurationProperties(TraceabilityHeaderNames.class)
+@Import({
+        GreetingModuleJavaConfig.class,
+        PdfModuleJavaConfig.class
+})
 public class ApplicationJavaConfig {
-
-    @Bean
-    public IPdfService pdfService() { return new PdfService(); }
 
     @Bean
     public TraceabilityWebFilter traceabilityWebFilter(final TraceabilityHeaderNames traceabilityHeaderNames) {

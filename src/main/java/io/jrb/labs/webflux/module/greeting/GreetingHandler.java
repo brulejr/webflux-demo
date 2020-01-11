@@ -21,39 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.web;
+package io.jrb.labs.webflux.module.greeting;
 
-import io.jrb.labs.webflux.service.pdf.IPdfService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 
-import static io.jrb.labs.webflux.common.webflux.FluxContentUtils.streamContent;
+public class GreetingHandler {
 
-@Slf4j
-public class PdfServiceHandler {
-
-    private final IPdfService pdfService;
-    private final Scheduler streamContentScheduler;
-
-    public PdfServiceHandler(
-            final IPdfService pdfService,
-            final Scheduler streamContentScheduler
-    ) {
-        this.pdfService = pdfService;
-        this.streamContentScheduler = streamContentScheduler;
-    }
-
-    public Mono<ServerResponse> createDocument(final ServerRequest request) {
-        final String documentId = request.pathVariable("documentId");
+    public Mono<ServerResponse> hello(final ServerRequest request) {
         return ServerResponse
                 .ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(streamContent(os -> pdfService.createDocument(documentId, os), streamContentScheduler), DataBuffer.class);
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(BodyInserters.fromValue("Hello, Spring!"));
     }
 
 }
