@@ -24,6 +24,7 @@
 package io.jrb.labs.webflux.module.security;
 
 import io.jrb.labs.webflux.common.module.ModuleJavaConfigSupport;
+import io.jrb.labs.webflux.module.security.service.IAuthenticationService;
 import io.jrb.labs.webflux.module.security.web.AuthenticationManager;
 import io.jrb.labs.webflux.module.security.web.JwtTokenProvider;
 import io.jrb.labs.webflux.module.security.web.PBKDF2Encoder;
@@ -66,7 +67,7 @@ public class SecurityModuleJavaConfig extends ModuleJavaConfigSupport implements
     public AuthenticationController authenticationController(
             final JwtTokenProvider jwtTokenProvider,
             final PBKDF2Encoder passwordEncoder,
-            final AuthenticationService authenticationService
+            final IAuthenticationService authenticationService
     ) {
         return new AuthenticationController(jwtTokenProvider, passwordEncoder, authenticationService);
     }
@@ -77,7 +78,7 @@ public class SecurityModuleJavaConfig extends ModuleJavaConfigSupport implements
     }
 
     @Bean
-    public AuthenticationService authenticationService() {
+    public IAuthenticationService authenticationService() {
         return new AuthenticationService();
     }
 

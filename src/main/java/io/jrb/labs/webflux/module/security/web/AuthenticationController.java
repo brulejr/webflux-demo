@@ -26,6 +26,7 @@ package io.jrb.labs.webflux.module.security.web;
 import io.jrb.labs.webflux.module.security.model.AuthRequest;
 import io.jrb.labs.webflux.module.security.model.AuthResponse;
 import io.jrb.labs.webflux.module.security.service.AuthenticationService;
+import io.jrb.labs.webflux.module.security.service.IAuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,12 +40,12 @@ public class AuthenticationController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final PBKDF2Encoder passwordEncoder;
-    private final AuthenticationService authenticationService;
+    private final IAuthenticationService authenticationService;
 
     public AuthenticationController(
             final JwtTokenProvider jwtTokenProvider,
             final PBKDF2Encoder passwordEncoder,
-            final AuthenticationService authenticationService
+            final IAuthenticationService authenticationService
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
