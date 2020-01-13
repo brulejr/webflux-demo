@@ -21,30 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.config;
+package io.jrb.labs.webflux.module.security;
 
-import io.jrb.labs.webflux.common.web.TraceabilityHeaderNames;
-import io.jrb.labs.webflux.common.web.TraceabilityWebFilter;
-import io.jrb.labs.webflux.module.greeting.GreetingModuleJavaConfig;
-import io.jrb.labs.webflux.module.pdf.PdfModuleJavaConfig;
-import io.jrb.labs.webflux.module.security.SecurityModuleJavaConfig;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
-@Configuration
-@EnableConfigurationProperties(TraceabilityHeaderNames.class)
-@Import({
-        GreetingModuleJavaConfig.class,
-        PdfModuleJavaConfig.class,
-        SecurityModuleJavaConfig.class
-})
-public class ApplicationJavaConfig {
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-    @Bean
-    public TraceabilityWebFilter traceabilityWebFilter(final TraceabilityHeaderNames traceabilityHeaderNames) {
-        return new TraceabilityWebFilter(traceabilityHeaderNames);
+@Accessors(fluent = true) @Getter
+@ConstructorBinding
+@ConfigurationProperties("module.security.jwt")
+public class JwtConfig {
+
+    private final String secret;
+    private final Long expirationInSec;
+    private final PasswordEncoderConfig passwordEncoder;
+
+    public JwtConfig(final String secret, final Long expirationInSec, final PasswordEncoderConfig passwordEncoder) {
+        this.secret = (secret != null) ? secret : randomAlphabetic(67, 67);
+        this.expirationInSec = expirationInSec;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public byte[] secretBytes() {
+        return (secret != null) ? secret.getBytes() : null;
     }
 
 }

@@ -24,3 +24,10 @@ module:
     enabled: true
   pdf:
     enabled: true
+  security:
+    jwt:
+      expirationInSec: 300
+      passwordEncoder:
+        secret: mysecret
+        iteration: 33
+        keylength: 256

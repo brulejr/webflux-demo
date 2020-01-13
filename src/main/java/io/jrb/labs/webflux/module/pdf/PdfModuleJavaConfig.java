@@ -41,7 +41,7 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 @Configuration
 @ConditionalOnProperty(name = "module.pdf.enabled")
-public class PdfModuleJavaConfig  extends ModuleJavaConfigSupport {
+public class PdfModuleJavaConfig extends ModuleJavaConfigSupport {
 
     private static final String MODULE_NAME = "PDF";
 

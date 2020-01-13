@@ -23,10 +23,17 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.apache.pdfbox:pdfbox:2.0.17'
+	implementation "com.google.guava:guava:${GUAVA_VERSION}"
+	implementation "io.jsonwebtoken:jjwt-api:${JSONWEBTOKEN_VERSION}"
+	implementation "org.apache.commons:commons-lang3"
+	implementation "org.apache.pdfbox:pdfbox:${PDFBOX_VERSION}"
 	implementation 'org.springframework.boot:spring-boot-configuration-processor'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	runtime "io.jsonwebtoken:jjwt-impl:${JSONWEBTOKEN_VERSION}"
+	runtime "io.jsonwebtoken:jjwt-jackson:${JSONWEBTOKEN_VERSION}"
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

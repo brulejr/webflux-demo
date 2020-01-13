@@ -21,30 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.config;
+package io.jrb.labs.webflux.module.security.model;
 
-import io.jrb.labs.webflux.common.web.TraceabilityHeaderNames;
-import io.jrb.labs.webflux.common.web.TraceabilityWebFilter;
-import io.jrb.labs.webflux.module.greeting.GreetingModuleJavaConfig;
-import io.jrb.labs.webflux.module.pdf.PdfModuleJavaConfig;
-import io.jrb.labs.webflux.module.security.SecurityModuleJavaConfig;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import lombok.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-@Configuration
-@EnableConfigurationProperties(TraceabilityHeaderNames.class)
-@Import({
-        GreetingModuleJavaConfig.class,
-        PdfModuleJavaConfig.class,
-        SecurityModuleJavaConfig.class
-})
-public class ApplicationJavaConfig {
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    @Bean
-    public TraceabilityWebFilter traceabilityWebFilter(final TraceabilityHeaderNames traceabilityHeaderNames) {
-        return new TraceabilityWebFilter(traceabilityHeaderNames);
+@Value
+public class User implements UserDetails {
+
+    private final String username;
+    private final String password;
+    private final boolean enabled;
+    private final List<Role> roles;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.name()))
+                .collect(Collectors.toList());
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
 }
