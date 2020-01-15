@@ -34,10 +34,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class JwtTokenProvider {
@@ -52,8 +55,11 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(final User user) {
+        final List<String> authorities =
+                user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         final Map<String, Object> claims = ImmutableMap.<String, Object>builder()
-                .put("role", user.getRoles())
+                .put("username", user.getUsername())
+                .put("authorities", authorities)
                 .build();
         return doGenerateToken(claims, user.getUsername());
     }

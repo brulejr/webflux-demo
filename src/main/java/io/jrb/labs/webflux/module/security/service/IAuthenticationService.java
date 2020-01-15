@@ -27,5 +27,7 @@ import io.jrb.labs.webflux.module.security.model.User;
 import reactor.core.publisher.Mono;
 
 public interface IAuthenticationService {
-    Mono<User> findByUsername(String username);
+
+    Mono<User> authenticate(String username, String password);
+
 }

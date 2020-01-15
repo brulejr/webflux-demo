@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -66,10 +67,9 @@ public class SecurityModuleJavaConfig extends ModuleJavaConfigSupport implements
     @Bean
     public AuthenticationController authenticationController(
             final JwtTokenProvider jwtTokenProvider,
-            final PBKDF2Encoder passwordEncoder,
             final IAuthenticationService authenticationService
     ) {
-        return new AuthenticationController(jwtTokenProvider, passwordEncoder, authenticationService);
+        return new AuthenticationController(jwtTokenProvider, authenticationService);
     }
 
     @Bean
@@ -78,8 +78,12 @@ public class SecurityModuleJavaConfig extends ModuleJavaConfigSupport implements
     }
 
     @Bean
-    public IAuthenticationService authenticationService() {
-        return new AuthenticationService();
+    public IAuthenticationService authenticationService(
+            final LdapTemplate ldapTemplate,
+            final PBKDF2Encoder passwordEncoder
+    ) {
+
+        return new AuthenticationService(ldapTemplate, passwordEncoder);
     }
 
     @Bean

@@ -23,8 +23,8 @@
  */
 package io.jrb.labs.webflux.module.security.web;
 
-import io.jrb.labs.webflux.module.security.model.Role;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +34,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class AuthenticationManager implements ReactiveAuthenticationManager {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -50,15 +51,13 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
             final String username = extractUsernameFromToken(authToken);
             if (username != null) {
                 final Claims claims = jwtTokenProvider.getAllClaimsFromToken(authToken);
-                final List<String> roles = claims.get("role", List.class);
+                final List<String> authorities = claims.get("authorities", List.class);
                 final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                         username,
                         null,
-                        roles.stream()
-                                .map(Role::valueOf)
-                                .map(authority -> new SimpleGrantedAuthority(authority.name()))
-                                .collect(Collectors.toList())
+                        authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList())
                 );
+                log.info("token auth = {}", auth);
                 return Mono.just(auth);
             }
         }

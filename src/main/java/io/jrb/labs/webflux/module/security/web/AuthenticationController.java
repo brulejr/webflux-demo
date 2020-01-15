@@ -25,7 +25,6 @@ package io.jrb.labs.webflux.module.security.web;
 
 import io.jrb.labs.webflux.module.security.model.AuthRequest;
 import io.jrb.labs.webflux.module.security.model.AuthResponse;
-import io.jrb.labs.webflux.module.security.service.AuthenticationService;
 import io.jrb.labs.webflux.module.security.service.IAuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,32 +38,24 @@ import reactor.core.publisher.Mono;
 public class AuthenticationController {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final PBKDF2Encoder passwordEncoder;
     private final IAuthenticationService authenticationService;
 
     public AuthenticationController(
             final JwtTokenProvider jwtTokenProvider,
-            final PBKDF2Encoder passwordEncoder,
             final IAuthenticationService authenticationService
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = passwordEncoder;
         this.authenticationService = authenticationService;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Mono<ResponseEntity<?>> login(@RequestBody final AuthRequest authRequest) {
-        return authenticationService.findByUsername(authRequest.getUsername()).map((userDetails) -> {
-            if (passwordEncoder.encode(authRequest.getPassword()).equals(userDetails.getPassword())) {
-                return ResponseEntity.ok(
-                        AuthResponse.builder()
-                        .token(jwtTokenProvider.generateToken(userDetails))
-                        .build()
-                );
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-        }).defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    public Mono<ResponseEntity<AuthResponse>> login(@RequestBody final AuthRequest authRequest) {
+        return authenticationService.authenticate(authRequest.getUsername(), authRequest.getPassword())
+                .map((userDetails) -> ResponseEntity.ok(
+                    AuthResponse.builder()
+                               .token(jwtTokenProvider.generateToken(userDetails))
+                            .build()
+                )).defaultIfEmpty(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
 }

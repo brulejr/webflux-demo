@@ -23,43 +23,87 @@
  */
 package io.jrb.labs.webflux.module.security.service;
 
-import io.jrb.labs.webflux.module.security.model.Role;
 import io.jrb.labs.webflux.module.security.model.User;
+import io.jrb.labs.webflux.module.security.web.PBKDF2Encoder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.AbstractContextMapper;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.filter.Filter;
+import org.springframework.ldap.query.LdapQuery;
+import org.springframework.ldap.support.LdapUtils;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
+
+@Slf4j
 public class AuthenticationService implements IAuthenticationService {
 
-    // this is just an example, you can load the user from the database from the repository
+    private static final String SECURITY_ROLE_PREFIX = "ROLE_";
 
-    //username:passwowrd -> user:user
-    private final String userUsername = "user";// password: user
-    private final User user = new User(
-            userUsername,
-            "cBrlgyL2GI2GINuLUUwgojITuIufFycpLG4490dhGtY=",
-            true,
-            Arrays.asList(Role.ROLE_USER)
-    );
+    private final LdapTemplate ldapTemplate;
+    private final PBKDF2Encoder passwordEncoder;
 
-    //username:passwowrd -> admin:admin
-    private final String adminUsername = "admin";// password: admin
-    private final User admin = new User(
-            adminUsername,
-            "dQNjUIMorJb8Ubj2+wVGYp6eAeYkdekqAcnYp+aRq5w=",
-            true,
-            Arrays.asList(Role.ROLE_ADMIN)
-    );
+    public AuthenticationService(
+            final LdapTemplate ldapTemplate,
+            final PBKDF2Encoder passwordEncoder
+    ) {
+        this.ldapTemplate = ldapTemplate;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
-    public Mono<User> findByUsername(String username) {
-        if (username.equals(userUsername)) {
+    public Mono<User> authenticate(final String username, final String password) {
+        final AndFilter filter = new AndFilter();
+        filter.and(new EqualsFilter("objectclass", "person")).and(new EqualsFilter("uid", username));
+        if (ldapTemplate.authenticate(LdapUtils.emptyLdapName(), filter.toString(), passwordEncoder.encode(password))) {
+            final User user = findUserByUsername(username);
+            log.info("user = {}", user);
             return Mono.just(user);
-        } else if (username.equals(adminUsername)) {
-            return Mono.just(admin);
-        } else {
-            return Mono.empty();
         }
+        return Mono.empty();
+    }
+
+    private User findUserByUsername(final String username) {
+        final LdapQuery query = query()
+                .where("objectclass").is("groupOfUniqueNames")
+                .and("uniqueMember").is(getDnForUser(username));
+
+        final List<GrantedAuthority> grantedAuths = ldapTemplate.search(
+                query,
+                (AttributesMapper<String>) attrs -> (String) attrs.get("cn").get()
+        ).stream()
+                .map(group -> String.format("%s%s", SECURITY_ROLE_PREFIX, group.toUpperCase()))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+        return new User(username, "", true, grantedAuths);
+    }
+
+    private String getDnForUser(String uid) {
+        final Filter f = new EqualsFilter("uid", uid);
+        final List<String> result = ldapTemplate.search(
+                LdapUtils.emptyLdapName(),
+                f.toString(),
+                new AbstractContextMapper<String>() {
+                    protected String doMapFromContext(DirContextOperations ctx) {
+                        return ctx.getNameInNamespace();
+                    }
+                });
+
+        if (result.size() != 1) {
+            throw new RuntimeException("User not found or not unique");
+        }
+
+        return result.get(0);
     }
 
 }

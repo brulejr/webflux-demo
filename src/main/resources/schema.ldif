@@ -1,0 +1,72 @@
+dn: dc=brule,dc=net
+objectclass: top
+objectclass: domain
+objectclass: extensibleObject
+dc: brule
+
+# Organizational Units
+dn: ou=groups,dc=brule,dc=net
+objectclass: top
+objectclass: organizationalUnit
+ou: groups
+
+dn: ou=people,dc=brule,dc=net
+objectclass: top
+objectclass: organizationalUnit
+ou: people
+
+# Create People
+dn: uid=admin,ou=people,dc=brule,dc=net
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Admin User
+sn: admin
+uid: admin
+userPassword: dQNjUIMorJb8Ubj2+wVGYp6eAeYkdekqAcnYp+aRq5w=
+
+dn: uid=jbrule,ou=people,dc=brule,dc=net
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Jon Brule
+sn: Brule
+uid: jbrule
+userPassword: $2a$04$hgI8OjNQ8QwhphrfWmbvguTd4d4u7Iho972OOFEE7IefVonLLa3gi
+
+dn: uid=user,ou=people,dc=brule,dc=net
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Normal User
+sn: user
+uid: user
+userPassword: cBrlgyL2GI2GINuLUUwgojITuIufFycpLG4490dhGtY=
+
+# Secondary Groups
+dn: cn=users,ou=groups,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: users
+ou: user
+uniqueMember: uid=user,ou=people,dc=brule,dc=net
+uniqueMember: uid=admin,ou=people,dc=brule,dc=net
+uniqueMember: uid=jbrule,ou=people,dc=brule,dc=net
+
+dn: cn=admins,ou=groups,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: admins
+ou: admin
+uniqueMember: uid=admin,ou=people,dc=brule,dc=net
+uniqueMember: uid=jbrule,ou=people,dc=brule,dc=net
+
+dn: cn=developers,ou=groups,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: developers
+ou: developer
+uniqueMember: uid=jbrule,ou=people,dc=brule,dc=net
