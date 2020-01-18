@@ -31,7 +31,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import reactor.core.publisher.Mono;
 
-import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -39,9 +38,6 @@ import java.util.function.Function;
 public class SongService extends CrudServiceSupport<Song> implements ISongService {
 
     private static final Function<Song, ApplicationEvent> CREATE_EVENT_SUPPLIER = SongCreatedEvent::new;
-
-    private static final Function<Song, Song> CREATE_TRANSFORMER = orig ->
-            orig.withId(UUID.randomUUID().toString());
 
     private static final BiFunction<Song, Song, Song> UPDATE_TRANSFORMER = (orig, update) ->
             orig.toBuilder()
@@ -58,7 +54,7 @@ public class SongService extends CrudServiceSupport<Song> implements ISongServic
     private final ReactiveSongRepository repository;
 
     public SongService(final ApplicationEventPublisher publisher, final ReactiveSongRepository repository) {
-        super(publisher, repository, CREATE_EVENT_SUPPLIER, CREATE_TRANSFORMER, UPDATE_TRANSFORMER);
+        super(publisher, repository, CREATE_EVENT_SUPPLIER, UPDATE_TRANSFORMER);
         this.repository = repository;
     }
 

@@ -26,16 +26,16 @@ package io.jrb.labs.webflux.common.service.crud;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface ICrudService<T> {
+public interface ICrudService<E extends Entity<E>> {
 
-    Flux<T> all();
+    Flux<E> all();
 
-    Mono<T> create(T entity);
+    Mono<E> create(E entity);
 
-    Mono<T> delete(String id);
+    Mono<E> delete(String id);
 
-    Mono<T> get(String id);
+    Mono<E> get(String id);
 
-    Mono<T> update(String id, T entity);
+    Mono<E> update(String id, E entity);
 
 }

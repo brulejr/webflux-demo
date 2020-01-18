@@ -29,26 +29,41 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static io.jrb.labs.webflux.common.validation.Validation.required;
 
 
-public abstract class CrudServiceSupport<T> implements ICrudService<T> {
+public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudService<E> {
 
     private final ApplicationEventPublisher publisher;
-    private final ReactiveMongoRepository<T, String> repository;
-    private final Function<T, ApplicationEvent> createEventSupplier;
-    private final Function<T , T> createTransformer;
-    private final BiFunction<T, T, T> updateTransformer;
+    private final ReactiveMongoRepository<E, String> repository;
+    private final Function<E, ApplicationEvent> createEventSupplier;
+    private final Function<E , E> createTransformer;
+    private final BiFunction<E, E, E> updateTransformer;
 
     protected CrudServiceSupport(
             final ApplicationEventPublisher publisher,
-            final ReactiveMongoRepository<T, String> repository,
-            final Function<T, ApplicationEvent> createEventSupplier,
-            final Function<T, T> createTransformer,
-            final BiFunction<T, T, T> updateTransformer
+            final ReactiveMongoRepository<E, String> repository,
+            final Function<E, ApplicationEvent> createEventSupplier,
+            final BiFunction<E, E, E> updateTransformer
+    ) {
+        this.publisher = required(publisher, "publisher");
+        this.repository = required(repository, "repository");
+        this.createEventSupplier = required(createEventSupplier, "createEventSupplier");
+        this.updateTransformer = required(updateTransformer, "updateTransformer");
+        this.createTransformer =
+                orig -> orig.withId(UUID.randomUUID().toString());
+    }
+
+    protected CrudServiceSupport(
+            final ApplicationEventPublisher publisher,
+            final ReactiveMongoRepository<E, String> repository,
+            final Function<E, ApplicationEvent> createEventSupplier,
+            final Function<E, E> createTransformer,
+            final BiFunction<E, E, E> updateTransformer
     ) {
         this.publisher = required(publisher, "publisher");
         this.repository = required(repository, "repository");
@@ -58,32 +73,32 @@ public abstract class CrudServiceSupport<T> implements ICrudService<T> {
     }
 
     @Override
-    public Flux<T> all() {
+    public Flux<E> all() {
         return repository.findAll();
     }
 
     @Override
-    public Mono<T> create(final T entity) {
-        final T entityToSave = createTransformer.apply(entity);
+    public Mono<E> create(final E entity) {
+        final E entityToSave = createTransformer.apply(entity);
         return repository
                 .save(entityToSave)
                 .doOnSuccess(e -> publisher.publishEvent(createEventSupplier.apply(e)));
     }
 
     @Override
-    public Mono<T> delete(final String id) {
+    public Mono<E> delete(final String id) {
         return repository
                 .findById(id)
                 .flatMap(d -> repository.deleteById(id).thenReturn(d));
     }
 
     @Override
-    public Mono<T> get(final String id) {
+    public Mono<E> get(final String id) {
         return repository.findById(id);
     }
 
     @Override
-    public Mono<T> update(final String id, final T entity) {
+    public Mono<E> update(final String id, final E entity) {
         return repository
                 .findById(id)
                 .map(d -> updateTransformer.apply(d, entity))
