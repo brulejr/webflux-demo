@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import io.jrb.labs.webflux.common.service.crud.Entity;
 import lombok.Builder;
 import lombok.Value;
-import lombok.experimental.Wither;
+import lombok.With;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -45,7 +45,7 @@ import java.util.Map;
 public class Song implements Entity<Song> {
 
     @Id
-    @Wither
+    @With
     private final String id;
 
     private final SongType type;
