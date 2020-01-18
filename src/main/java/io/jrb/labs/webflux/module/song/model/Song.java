@@ -21,32 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.config;
+package io.jrb.labs.webflux.module.song.model;
 
-import io.jrb.labs.webflux.common.web.TraceabilityHeaderNames;
-import io.jrb.labs.webflux.common.web.TraceabilityWebFilter;
-import io.jrb.labs.webflux.module.greeting.GreetingModuleJavaConfig;
-import io.jrb.labs.webflux.module.pdf.PdfModuleJavaConfig;
-import io.jrb.labs.webflux.module.security.SecurityModuleJavaConfig;
-import io.jrb.labs.webflux.module.song.SongModuleJavaConfig;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.Builder;
+import lombok.Value;
+import lombok.experimental.Wither;
+import org.springframework.data.annotation.Id;
 
-@Configuration
-@EnableConfigurationProperties(TraceabilityHeaderNames.class)
-@Import({
-        GreetingModuleJavaConfig.class,
-        PdfModuleJavaConfig.class,
-        SecurityModuleJavaConfig.class,
-        SongModuleJavaConfig.class
-})
-public class ApplicationJavaConfig {
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
-    @Bean
-    public TraceabilityWebFilter traceabilityWebFilter(final TraceabilityHeaderNames traceabilityHeaderNames) {
-        return new TraceabilityWebFilter(traceabilityHeaderNames);
+/**
+ * Defines a song.
+ */
+@org.springframework.data.mongodb.core.mapping.Document
+@Value
+@Builder(toBuilder = true)
+@JsonDeserialize(builder = Song.SongBuilder.class)
+public class Song implements Serializable {
+
+    @Id
+    @Wither
+    private final String id;
+
+    private final SongType type;
+
+    private final String title;
+
+    private final List<String> authors;
+
+    private final List<String> additionalTitles;
+
+    private final List<String> themes;
+
+    private final Map<String, List<String>> lyrics;
+
+    private final List<String> lyricOrder;
+
+    private final Source source;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class SongBuilder {
     }
 
 }

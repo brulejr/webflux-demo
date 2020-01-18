@@ -21,32 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.config;
+package io.jrb.labs.webflux.module.song.model;
 
-import io.jrb.labs.webflux.common.web.TraceabilityHeaderNames;
-import io.jrb.labs.webflux.common.web.TraceabilityWebFilter;
-import io.jrb.labs.webflux.module.greeting.GreetingModuleJavaConfig;
-import io.jrb.labs.webflux.module.pdf.PdfModuleJavaConfig;
-import io.jrb.labs.webflux.module.security.SecurityModuleJavaConfig;
-import io.jrb.labs.webflux.module.song.SongModuleJavaConfig;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+public enum SongType {
 
-@Configuration
-@EnableConfigurationProperties(TraceabilityHeaderNames.class)
-@Import({
-        GreetingModuleJavaConfig.class,
-        PdfModuleJavaConfig.class,
-        SecurityModuleJavaConfig.class,
-        SongModuleJavaConfig.class
-})
-public class ApplicationJavaConfig {
-
-    @Bean
-    public TraceabilityWebFilter traceabilityWebFilter(final TraceabilityHeaderNames traceabilityHeaderNames) {
-        return new TraceabilityWebFilter(traceabilityHeaderNames);
-    }
+    NORMAL;
 
 }

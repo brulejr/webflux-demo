@@ -43,3 +43,5 @@ module:
         secret: mysecret
         iteration: 33
         keylength: 256
+  song:
+    enabled: true
