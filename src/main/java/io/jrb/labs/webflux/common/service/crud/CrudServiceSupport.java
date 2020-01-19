@@ -40,49 +40,27 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
 
     private final ApplicationEventPublisher publisher;
     private final ReactiveMongoRepository<E, String> repository;
-    private final Function<E, ApplicationEvent> createEventSupplier;
-    private final Function<E , E> createTransformer;
-    private final BiFunction<E, E, E> updateTransformer;
 
     protected CrudServiceSupport(
             final ApplicationEventPublisher publisher,
-            final ReactiveMongoRepository<E, String> repository,
-            final Function<E, ApplicationEvent> createEventSupplier,
-            final BiFunction<E, E, E> updateTransformer
+            final ReactiveMongoRepository<E, String> repository
     ) {
         this.publisher = required(publisher, "publisher");
         this.repository = required(repository, "repository");
-        this.createEventSupplier = required(createEventSupplier, "createEventSupplier");
-        this.updateTransformer = required(updateTransformer, "updateTransformer");
-        this.createTransformer =
-                orig -> orig.withId(UUID.randomUUID().toString());
-    }
-
-    protected CrudServiceSupport(
-            final ApplicationEventPublisher publisher,
-            final ReactiveMongoRepository<E, String> repository,
-            final Function<E, ApplicationEvent> createEventSupplier,
-            final Function<E, E> createTransformer,
-            final BiFunction<E, E, E> updateTransformer
-    ) {
-        this.publisher = required(publisher, "publisher");
-        this.repository = required(repository, "repository");
-        this.createEventSupplier = required(createEventSupplier, "createEventSupplier");
-        this.createTransformer = required(createTransformer, "createTransformer");
-        this.updateTransformer = required(updateTransformer, "updateTransformer");
     }
 
     @Override
     public Flux<E> all() {
-        return repository.findAll();
+        return repository.findAll()
+                .map(retrieveTransformer());
     }
 
     @Override
     public Mono<E> create(final E entity) {
-        final E entityToSave = createTransformer.apply(entity);
+        final E entityToSave = createTransformer().apply(entity);
         return repository
                 .save(entityToSave)
-                .doOnSuccess(e -> publisher.publishEvent(createEventSupplier.apply(e)));
+                .doOnSuccess(e -> publisher.publishEvent(createEventSupplier().apply(e)));
     }
 
     @Override
@@ -101,8 +79,20 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
     public Mono<E> update(final String id, final E entity) {
         return repository
                 .findById(id)
-                .map(d -> updateTransformer.apply(d, entity))
+                .map(d -> updateTransformer().apply(d, entity))
                 .flatMap(repository::save);
     }
+
+    protected abstract Function<E, ApplicationEvent> createEventSupplier();
+
+    protected Function<E, E> createTransformer() {
+        return orig -> orig.withId(UUID.randomUUID().toString());
+    }
+
+    protected Function<E, E> retrieveTransformer() {
+        return orig -> orig;
+    }
+
+    protected abstract BiFunction<E, E, E> updateTransformer();
 
 }

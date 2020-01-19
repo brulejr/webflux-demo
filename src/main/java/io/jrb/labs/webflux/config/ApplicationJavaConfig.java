@@ -23,6 +23,7 @@
  */
 package io.jrb.labs.webflux.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.jrb.labs.webflux.common.web.TraceabilityHeaderNames;
 import io.jrb.labs.webflux.common.web.TraceabilityWebFilter;
 import io.jrb.labs.webflux.module.greeting.GreetingModuleJavaConfig;
@@ -33,6 +34,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 @EnableConfigurationProperties(TraceabilityHeaderNames.class)
@@ -47,6 +49,13 @@ public class ApplicationJavaConfig {
     @Bean
     public TraceabilityWebFilter traceabilityWebFilter(final TraceabilityHeaderNames traceabilityHeaderNames) {
         return new TraceabilityWebFilter(traceabilityHeaderNames);
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+        final Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+        builder.serializationInclusion(JsonInclude.Include.NON_NULL);
+        return builder;
     }
 
 }
