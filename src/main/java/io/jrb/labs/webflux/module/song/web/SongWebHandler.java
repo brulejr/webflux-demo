@@ -23,9 +23,13 @@
  */
 package io.jrb.labs.webflux.module.song.web;
 
+import io.jrb.labs.webflux.common.service.crud.UnknownEntityException;
+import io.jrb.labs.webflux.common.web.ErrorDTO;
 import io.jrb.labs.webflux.module.song.model.Song;
 import io.jrb.labs.webflux.module.song.service.ISongService;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -45,29 +49,26 @@ public class SongWebHandler {
 
     public Mono<ServerResponse> createSong(final ServerRequest request) {
         final Mono<Song> songData = request.body(BodyExtractors.toMono(Song.class));
-        final Mono<Song> newSong = songData.flatMap(song -> songService.create(song));
-        return ServerResponse
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(newSong, Song.class));
+        return songData
+                .flatMap(songService::create)
+                .flatMap(this::createdEntityResponse)
+                .onErrorResume(this::errorResponse);
     }
 
     public Mono<ServerResponse> deleteSong(final ServerRequest request) {
         final String songId = request.pathVariable("songId");
-        final Mono<Song> deletedSong = songService.delete(songId);
-        return ServerResponse
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(deletedSong, Song.class));
+        return Mono.just(songId)
+                .flatMap(songService::delete)
+                .flatMap(this::foundEntityResponse)
+                .onErrorResume(this::errorResponse);
     }
 
     public Mono<ServerResponse> getSong(final ServerRequest request) {
         final String songId = request.pathVariable("songId");
-        final Mono<Song> foundSong = songService.get(songId);
-        return ServerResponse
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(foundSong, Song.class));
+        return Mono.just(songId)
+                .flatMap(songService::get)
+                .flatMap(this::foundEntityResponse)
+                .onErrorResume(this::errorResponse);
     }
 
     public Mono<ServerResponse> retrieveSongs(final ServerRequest request) {
@@ -75,17 +76,61 @@ public class SongWebHandler {
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(foundSong, Song.class));
+                .body(BodyInserters.fromPublisher(foundSong, Song.class))
+                .onErrorResume(this::errorResponse);
     }
 
     public Mono<ServerResponse> updateSong(final ServerRequest request) {
         final String songId = request.pathVariable("songId");
         final Mono<Song> songData = request.body(BodyExtractors.toMono(Song.class));
-        final Mono<Song> updatedSong = songData.flatMap(song -> songService.update(songId, song));
-        return ServerResponse
-                .ok()
+        return songData
+                .flatMap(song -> songService.update(songId, song))
+                .flatMap(this::createdEntityResponse)
+                .onErrorResume(this::errorResponse);
+    }
+
+    private HttpStatus calculateErrorStatus(final Throwable t) {
+        if (t instanceof UnknownEntityException) {
+            return HttpStatus.NOT_FOUND;
+        }
+        return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    private Mono<ServerResponse> errorResponse(final Throwable t) {
+        final HttpStatus status = calculateErrorStatus(t);
+        final ErrorDTO errorDTO = ErrorDTO.builder()
+                .errorCode(status.name())
+                .description(t.getMessage())
+                .build();
+        return ServerResponse.status(status)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(updatedSong, Song.class));
+                .body(BodyInserters.fromValue(errorDTO));
+    }
+
+    private Mono<ServerResponse> createdEntityResponse(final Song song) {
+        return entityResponse(song, HttpStatus.CREATED);
+    }
+
+    private Mono<ServerResponse> foundEntityResponse(final Song song) {
+        return entityResponse(song, HttpStatus.OK);
+    }
+
+    private Mono<ServerResponse> retrievedEntityResponse(final Flux<Song> stream) {
+        return entityStreamResponse(stream, HttpStatus.OK);
+    }
+
+    private Mono<ServerResponse> entityResponse(final Song song, final HttpStatus status) {
+        return ServerResponse
+                .status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(song));
+    }
+
+    private Mono<ServerResponse> entityStreamResponse(final Flux<Song> stream, final HttpStatus status) {
+        return ServerResponse
+                .status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromPublisher(stream, Song.class));
     }
 
 }

@@ -23,6 +23,7 @@
  */
 package io.jrb.labs.webflux.common.service.crud;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
@@ -35,7 +36,7 @@ import java.util.function.Function;
 
 import static io.jrb.labs.webflux.common.validation.Validation.required;
 
-
+@Slf4j
 public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudService<E> {
 
     private final ApplicationEventPublisher publisher;
@@ -58,27 +59,26 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
     @Override
     public Mono<E> create(final E entity) {
         final E entityToSave = createTransformer().apply(entity);
-        return repository
-                .save(entityToSave)
+        return Mono.just(entityToSave)
+                .flatMap(repository::save)
                 .doOnSuccess(e -> publisher.publishEvent(createEventSupplier().apply(e)));
     }
 
     @Override
     public Mono<E> delete(final String id) {
-        return repository
-                .findById(id)
-                .flatMap(d -> repository.deleteById(id).thenReturn(d));
+        return get(id).flatMap(d -> repository.deleteById(id).thenReturn(d));
     }
 
     @Override
     public Mono<E> get(final String id) {
-        return repository.findById(id);
+        return Mono.just(id)
+                .flatMap(repository::findById)
+                .switchIfEmpty(Mono.error(new UnknownEntityException(entityClass(), id)));
     }
 
     @Override
     public Mono<E> update(final String id, final E entity) {
-        return repository
-                .findById(id)
+        return get(id)
                 .map(d -> updateTransformer().apply(d, entity))
                 .flatMap(repository::save);
     }
@@ -88,6 +88,8 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
     protected Function<E, E> createTransformer() {
         return orig -> orig.withId(UUID.randomUUID().toString());
     }
+
+    protected abstract Class<E> entityClass();
 
     protected Function<E, E> retrieveTransformer() {
         return orig -> orig;

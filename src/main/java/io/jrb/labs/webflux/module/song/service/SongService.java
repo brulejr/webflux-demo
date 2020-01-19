@@ -55,6 +55,9 @@ public class SongService extends CrudServiceSupport<Song> implements ISongServic
     }
 
     @Override
+    protected Class<Song> entityClass() { return Song.class; }
+
+    @Override
     protected Function<Song, Song> retrieveTransformer() {
         return orig -> Song.builder()
                 .id(orig.getId())
