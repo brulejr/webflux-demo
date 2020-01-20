@@ -121,4 +121,5 @@ public abstract class CrudWebHandler<E extends Entity<E>> {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(entity));
     }
+
 }

@@ -53,48 +53,28 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> createSongEndpoint(final SongWebHandler songWebHandler) {
+    public RouterFunction<ServerResponse> songEndpoints(final SongWebHandler songWebHandler) {
         return RouterFunctions.route(
                 RequestPredicates
                         .POST("/song")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::createEntity
-        );
-    }
-
-    @Bean
-    public RouterFunction<ServerResponse> deleteSongEndpoint(final SongWebHandler songWebHandler) {
-        return RouterFunctions.route(
+        ).andRoute(
                 RequestPredicates
                         .DELETE("/song/{songId}")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::deleteEntity
-        );
-    }
-
-    @Bean
-    public RouterFunction<ServerResponse> getSongEndpoint(final SongWebHandler songWebHandler) {
-        return RouterFunctions.route(
+        ).andRoute(
                 RequestPredicates
                         .GET("/song/{songId}")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::getEntity
-        );
-    }
-
-    @Bean
-    public RouterFunction<ServerResponse> retrieveSongsEndpoint(final SongWebHandler songWebHandler) {
-        return RouterFunctions.route(
+        ).andRoute(
                 RequestPredicates
                         .GET("/song")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::retrieveEntities
-        );
-    }
-
-    @Bean
-    public RouterFunction<ServerResponse> updateSongEndpoint(final SongWebHandler songWebHandler) {
-        return RouterFunctions.route(
+        ).andRoute(
                 RequestPredicates
                         .PUT("/song/{songId}")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
