@@ -58,7 +58,7 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
                 RequestPredicates
                         .POST("/song")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::createSong
+                songWebHandler::createEntity
         );
     }
 
@@ -68,7 +68,7 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
                 RequestPredicates
                         .DELETE("/song/{songId}")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::deleteSong
+                songWebHandler::deleteEntity
         );
     }
 
@@ -78,7 +78,7 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
                 RequestPredicates
                         .GET("/song/{songId}")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::getSong
+                songWebHandler::getEntity
         );
     }
 
@@ -88,7 +88,7 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
                 RequestPredicates
                         .GET("/song")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::retrieveSongs
+                songWebHandler::retrieveEntities
         );
     }
 
@@ -98,7 +98,7 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
                 RequestPredicates
                         .PUT("/song/{songId}")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::updateSong
+                songWebHandler::updateEntity
         );
     }
 
