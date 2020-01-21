@@ -35,22 +35,22 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D>, L extends DTO<L>> {
+public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D>, M extends DTO<M>> {
 
     private final ICrudService<E> crudService;
     private final Class<D> dtoClass;
-    private final Class<L> dtoLiteClass;
+    private final Class<M> dtoMetadataClass;
     private final String dtoIdField;
 
     protected CrudWebHandlerSupport(
             final ICrudService<E> crudService,
             final Class<D> dtoClass,
-            final Class<L> dtoLiteClass,
+            final Class<M> dtoMetadataClass,
             final String dtoIdField
     ) {
         this.crudService = crudService;
         this.dtoClass = dtoClass;
-        this.dtoLiteClass = dtoLiteClass;
+        this.dtoMetadataClass = dtoMetadataClass;
         this.dtoIdField = dtoIdField;
     }
 
@@ -80,12 +80,12 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D
     }
 
     public Mono<ServerResponse> retrieveEntities(final ServerRequest request) {
-        final Flux<L> dtos = crudService.all()
-                .map(this::entityToDtoLite);
+        final Flux<M> dtos = crudService.all()
+                .map(this::entityToMetadata);
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(dtos, dtoLiteClass))
+                .body(BodyInserters.fromPublisher(dtos, dtoMetadataClass))
                 .onErrorResume(this::errorResponse);
     }
 
@@ -129,7 +129,7 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D
 
     protected abstract D entityToDto(E entity);
 
-    protected abstract L entityToDtoLite(E entity);
+    protected abstract M entityToMetadata(E entity);
 
     private Mono<ServerResponse> dtoResponse(final E entity, final HttpStatus status) {
         final D dto = entityToDto(entity);

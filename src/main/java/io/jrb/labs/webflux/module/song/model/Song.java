@@ -29,13 +29,16 @@ import io.jrb.labs.webflux.common.web.DTO;
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.List;
+import java.util.Map;
+
 /**
- * Defines a data transfer object for a song.
+ * Defines a deep data transfer object for a song, including all its details.
  */
 @Value
 @Builder(toBuilder = true)
-@JsonDeserialize(builder = SongDTO.SongDTOBuilder.class)
-public class SongDTO implements DTO<SongDTO> {
+@JsonDeserialize(builder = Song.SongBuilder.class)
+public class Song implements DTO<Song> {
 
     private final String id;
 
@@ -43,10 +46,20 @@ public class SongDTO implements DTO<SongDTO> {
 
     private final String title;
 
+    private final List<String> authors;
+
+    private final List<String> additionalTitles;
+
+    private final List<String> themes;
+
+    private final Map<String, List<String>> lyrics;
+
+    private final List<String> lyricOrder;
+
     private final Source source;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class SongDTOBuilder {
+    public static class SongBuilder {
     }
 
 }

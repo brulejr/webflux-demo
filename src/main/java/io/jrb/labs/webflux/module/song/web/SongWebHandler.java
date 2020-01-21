@@ -24,21 +24,21 @@
 package io.jrb.labs.webflux.module.song.web;
 
 import io.jrb.labs.webflux.common.web.CrudWebHandlerSupport;
-import io.jrb.labs.webflux.module.song.model.SongDTO;
-import io.jrb.labs.webflux.module.song.model.SongDetailsDTO;
+import io.jrb.labs.webflux.module.song.model.SongMetadata;
+import io.jrb.labs.webflux.module.song.model.Song;
 import io.jrb.labs.webflux.module.song.model.SongEntity;
 import io.jrb.labs.webflux.module.song.service.ISongService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, SongDetailsDTO, SongDTO> {
+public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, Song, SongMetadata> {
 
     public SongWebHandler(final ISongService songService) {
-        super(songService, SongDetailsDTO.class, SongDTO.class, "songId");
+        super(songService, Song.class, SongMetadata.class, "songId");
     }
 
     @Override
-    protected SongEntity dtoToEntity(final SongDetailsDTO dto) {
+    protected SongEntity dtoToEntity(final Song dto) {
         return SongEntity.builder()
                 .id(dto.getId())
                 .type(dto.getType())
@@ -53,8 +53,8 @@ public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, SongDetail
     }
 
     @Override
-    protected SongDetailsDTO entityToDto(final SongEntity entity) {
-        return SongDetailsDTO.builder()
+    protected Song entityToDto(final SongEntity entity) {
+        return Song.builder()
                 .id(entity.getId())
                 .type(entity.getType())
                 .title(entity.getTitle())
@@ -68,8 +68,8 @@ public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, SongDetail
     }
 
     @Override
-    protected SongDTO entityToDtoLite(final SongEntity entity) {
-        return SongDTO.builder()
+    protected SongMetadata entityToMetadata(final SongEntity entity) {
+        return SongMetadata.builder()
                 .id(entity.getId())
                 .type(entity.getType())
                 .title(entity.getTitle())
