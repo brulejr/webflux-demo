@@ -24,22 +24,22 @@
 package io.jrb.labs.webflux.module.song.web;
 
 import io.jrb.labs.webflux.common.web.CrudWebHandlerSupport;
+import io.jrb.labs.webflux.module.song.model.SongDTO;
 import io.jrb.labs.webflux.module.song.model.SongDetailsDTO;
 import io.jrb.labs.webflux.module.song.model.SongEntity;
 import io.jrb.labs.webflux.module.song.service.ISongService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, SongDetailsDTO> {
+public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, SongDetailsDTO, SongDTO> {
 
     public SongWebHandler(final ISongService songService) {
-        super(songService, SongDetailsDTO.class, "songId");
+        super(songService, SongDetailsDTO.class, SongDTO.class, "songId");
     }
 
     @Override
     protected SongEntity dtoToEntity(final SongDetailsDTO dto) {
-
-        final SongEntity.SongEntityBuilder builder = SongEntity.builder()
+        return SongEntity.builder()
                 .id(dto.getId())
                 .type(dto.getType())
                 .title(dto.getTitle())
@@ -48,13 +48,13 @@ public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, SongDetail
                 .themes(dto.getThemes())
                 .lyrics(dto.getLyrics())
                 .lyricOrder(dto.getLyricOrder())
-                .source(dto.getSource());
-        return builder.build();
+                .source(dto.getSource())
+                .build();
     }
 
     @Override
-    protected SongDetailsDTO entityToDTO(final SongEntity entity) {
-        final SongDetailsDTO.SongDetailsDTOBuilder builder = SongDetailsDTO.builder()
+    protected SongDetailsDTO entityToDto(final SongEntity entity) {
+        return SongDetailsDTO.builder()
                 .id(entity.getId())
                 .type(entity.getType())
                 .title(entity.getTitle())
@@ -63,8 +63,18 @@ public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, SongDetail
                 .themes(entity.getThemes())
                 .lyrics(entity.getLyrics())
                 .lyricOrder(entity.getLyricOrder())
-                .source(entity.getSource());
-        return builder.build();
+                .source(entity.getSource())
+                .build();
+    }
+
+    @Override
+    protected SongDTO entityToDtoLite(final SongEntity entity) {
+        return SongDTO.builder()
+                .id(entity.getId())
+                .type(entity.getType())
+                .title(entity.getTitle())
+                .source(entity.getSource())
+                .build();
     }
 
 }

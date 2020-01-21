@@ -35,19 +35,22 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D>> {
+public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D>, L extends DTO<L>> {
 
     private final ICrudService<E> crudService;
     private final Class<D> dtoClass;
+    private final Class<L> dtoLiteClass;
     private final String dtoIdField;
 
     protected CrudWebHandlerSupport(
             final ICrudService<E> crudService,
             final Class<D> dtoClass,
+            final Class<L> dtoLiteClass,
             final String dtoIdField
     ) {
         this.crudService = crudService;
         this.dtoClass = dtoClass;
+        this.dtoLiteClass = dtoLiteClass;
         this.dtoIdField = dtoIdField;
     }
 
@@ -77,12 +80,12 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D
     }
 
     public Mono<ServerResponse> retrieveEntities(final ServerRequest request) {
-        final Flux<D> dtos = crudService.all()
-                .map(this::entityToDTO);
+        final Flux<L> dtos = crudService.all()
+                .map(this::entityToDtoLite);
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(dtos, dtoClass))
+                .body(BodyInserters.fromPublisher(dtos, dtoLiteClass))
                 .onErrorResume(this::errorResponse);
     }
 
@@ -124,10 +127,12 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D
 
     protected abstract E dtoToEntity(D dto);
 
-    protected abstract D entityToDTO(E entity);
+    protected abstract D entityToDto(E entity);
+
+    protected abstract L entityToDtoLite(E entity);
 
     private Mono<ServerResponse> dtoResponse(final E entity, final HttpStatus status) {
-        final D dto = entityToDTO(entity);
+        final D dto = entityToDto(entity);
         return ServerResponse
                 .status(status)
                 .contentType(MediaType.APPLICATION_JSON)
