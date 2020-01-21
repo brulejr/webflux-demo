@@ -23,13 +23,13 @@
  */
 package io.jrb.labs.webflux.module.song.web;
 
-import io.jrb.labs.webflux.common.web.CrudWebHandler;
+import io.jrb.labs.webflux.common.web.CrudWebHandlerSupport;
 import io.jrb.labs.webflux.module.song.model.Song;
 import io.jrb.labs.webflux.module.song.service.ISongService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SongWebHandler extends CrudWebHandler<Song> {
+public class SongWebHandler extends CrudWebHandlerSupport<Song> {
 
     public SongWebHandler(final ISongService songService) {
         super(songService);

@@ -35,11 +35,11 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public abstract class CrudWebHandler<E extends Entity<E>> {
+public abstract class CrudWebHandlerSupport<E extends Entity<E>> {
 
     private final ICrudService<E> crudService;
 
-    protected CrudWebHandler(ICrudService<E> crudService) {
+    protected CrudWebHandlerSupport(ICrudService<E> crudService) {
         this.crudService = crudService;
     }
 
