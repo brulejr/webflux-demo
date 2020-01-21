@@ -21,14 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.repository;
+package io.jrb.labs.webflux.module.song.model;
 
-import io.jrb.labs.webflux.module.song.model.SongEntity;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import reactor.core.publisher.Mono;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import io.jrb.labs.webflux.common.web.DTO;
+import lombok.Builder;
+import lombok.Value;
 
-public interface ReactiveSongRepository extends ReactiveMongoRepository<SongEntity, String> {
+import java.util.List;
+import java.util.Map;
 
-    Mono<SongEntity> findFirstByTitle(String title);
+/**
+ * Defines a deep data transfer object for a song, including all its details.
+ */
+@Value
+@Builder(toBuilder = true)
+@JsonDeserialize(builder = SongDetailsDTO.SongDetailsDTOBuilder.class)
+public class SongDetailsDTO implements DTO<SongDetailsDTO> {
+
+    private final String id;
+
+    private final SongType type;
+
+    private final String title;
+
+    private final List<String> authors;
+
+    private final List<String> additionalTitles;
+
+    private final List<String> themes;
+
+    private final Map<String, List<String>> lyrics;
+
+    private final List<String> lyricOrder;
+
+    private final Source source;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class SongDetailsDTOBuilder {
+    }
 
 }

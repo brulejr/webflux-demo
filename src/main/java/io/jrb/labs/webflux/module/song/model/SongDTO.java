@@ -25,47 +25,28 @@ package io.jrb.labs.webflux.module.song.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import io.jrb.labs.webflux.common.service.crud.Entity;
+import io.jrb.labs.webflux.common.web.DTO;
 import lombok.Builder;
 import lombok.Value;
-import lombok.With;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.List;
-import java.util.Map;
 
 /**
- * Defines a song.
+ * Defines a data transfer object for a song.
  */
-@Document
 @Value
 @Builder(toBuilder = true)
-@JsonDeserialize(builder = Song.SongBuilder.class)
-public class Song implements Entity<Song> {
+@JsonDeserialize(builder = SongDTO.SongDTOBuilder.class)
+public class SongDTO implements DTO<SongDTO> {
 
-    @Id
-    @With
     private final String id;
 
     private final SongType type;
 
     private final String title;
 
-    private final List<String> authors;
-
-    private final List<String> additionalTitles;
-
-    private final List<String> themes;
-
-    private final Map<String, List<String>> lyrics;
-
-    private final List<String> lyricOrder;
-
     private final Source source;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class SongBuilder {
+    public static class SongDTOBuilder {
     }
 
 }

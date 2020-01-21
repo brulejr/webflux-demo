@@ -24,25 +24,47 @@
 package io.jrb.labs.webflux.module.song.web;
 
 import io.jrb.labs.webflux.common.web.CrudWebHandlerSupport;
-import io.jrb.labs.webflux.module.song.model.Song;
+import io.jrb.labs.webflux.module.song.model.SongDetailsDTO;
+import io.jrb.labs.webflux.module.song.model.SongEntity;
 import io.jrb.labs.webflux.module.song.service.ISongService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SongWebHandler extends CrudWebHandlerSupport<Song> {
+public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, SongDetailsDTO> {
 
     public SongWebHandler(final ISongService songService) {
-        super(songService);
+        super(songService, SongDetailsDTO.class, "songId");
     }
 
     @Override
-    protected Class<Song> entityClass() {
-        return Song.class;
+    protected SongEntity dtoToEntity(final SongDetailsDTO dto) {
+
+        final SongEntity.SongEntityBuilder builder = SongEntity.builder()
+                .id(dto.getId())
+                .type(dto.getType())
+                .title(dto.getTitle())
+                .authors(dto.getAuthors())
+                .additionalTitles(dto.getAdditionalTitles())
+                .themes(dto.getThemes())
+                .lyrics(dto.getLyrics())
+                .lyricOrder(dto.getLyricOrder())
+                .source(dto.getSource());
+        return builder.build();
     }
 
     @Override
-    protected String entityIdField() {
-        return "songId";
+    protected SongDetailsDTO entityToDTO(final SongEntity entity) {
+        final SongDetailsDTO.SongDetailsDTOBuilder builder = SongDetailsDTO.builder()
+                .id(entity.getId())
+                .type(entity.getType())
+                .title(entity.getTitle())
+                .authors(entity.getAuthors())
+                .additionalTitles(entity.getAdditionalTitles())
+                .themes(entity.getThemes())
+                .lyrics(entity.getLyrics())
+                .lyricOrder(entity.getLyricOrder())
+                .source(entity.getSource());
+        return builder.build();
     }
 
 }

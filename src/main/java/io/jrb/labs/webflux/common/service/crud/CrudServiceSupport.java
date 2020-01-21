@@ -41,19 +41,21 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
 
     private final ApplicationEventPublisher publisher;
     private final ReactiveMongoRepository<E, String> repository;
+    private final Class<E> entityClass;
 
     protected CrudServiceSupport(
             final ApplicationEventPublisher publisher,
-            final ReactiveMongoRepository<E, String> repository
+            final ReactiveMongoRepository<E, String> repository,
+            final Class<E> entityClass
     ) {
         this.publisher = required(publisher, "publisher");
         this.repository = required(repository, "repository");
+        this.entityClass = required(entityClass, "entityClass");
     }
 
     @Override
     public Flux<E> all() {
-        return repository.findAll()
-                .map(retrieveTransformer());
+        return repository.findAll();
     }
 
     @Override
@@ -73,7 +75,7 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
     public Mono<E> get(final String id) {
         return Mono.just(id)
                 .flatMap(repository::findById)
-                .switchIfEmpty(Mono.error(new UnknownEntityException(entityClass(), id)));
+                .switchIfEmpty(Mono.error(new UnknownEntityException(entityClass, id)));
     }
 
     @Override
@@ -87,12 +89,6 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
 
     protected Function<E, E> createTransformer() {
         return orig -> orig.withId(UUID.randomUUID().toString());
-    }
-
-    protected abstract Class<E> entityClass();
-
-    protected Function<E, E> retrieveTransformer() {
-        return orig -> orig;
     }
 
     protected abstract BiFunction<E, E, E> updateTransformer();

@@ -35,53 +35,64 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public abstract class CrudWebHandlerSupport<E extends Entity<E>> {
+public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D>> {
 
     private final ICrudService<E> crudService;
+    private final Class<D> dtoClass;
+    private final String dtoIdField;
 
-    protected CrudWebHandlerSupport(ICrudService<E> crudService) {
+    protected CrudWebHandlerSupport(
+            final ICrudService<E> crudService,
+            final Class<D> dtoClass,
+            final String dtoIdField
+    ) {
         this.crudService = crudService;
+        this.dtoClass = dtoClass;
+        this.dtoIdField = dtoIdField;
     }
 
     public Mono<ServerResponse> createEntity(final ServerRequest request) {
-        final Mono<E> entityData = request.body(BodyExtractors.toMono(entityClass()));
-        return entityData
+        final Mono<D> dtoData = request.body(BodyExtractors.toMono(dtoClass));
+        return dtoData
+                .map(this::dtoToEntity)
                 .flatMap(crudService::create)
-                .flatMap(this::createdEntityResponse)
+                .flatMap(this::createdResponse)
                 .onErrorResume(this::errorResponse);
     }
 
     public Mono<ServerResponse> deleteEntity(final ServerRequest request) {
-        final String songId = request.pathVariable(entityIdField());
-        return Mono.just(songId)
+        final String dtoId = request.pathVariable(dtoIdField);
+        return Mono.just(dtoId)
                 .flatMap(crudService::delete)
-                .flatMap(this::foundEntityResponse)
+                .flatMap(this::foundResponse)
                 .onErrorResume(this::errorResponse);
     }
 
     public Mono<ServerResponse> getEntity(final ServerRequest request) {
-        final String songId = request.pathVariable(entityIdField());
-        return Mono.just(songId)
+        final String dtoId = request.pathVariable(dtoIdField);
+        return Mono.just(dtoId)
                 .flatMap(crudService::get)
-                .flatMap(this::foundEntityResponse)
+                .flatMap(this::foundResponse)
                 .onErrorResume(this::errorResponse);
     }
 
     public Mono<ServerResponse> retrieveEntities(final ServerRequest request) {
-        final Flux<E> entities = crudService.all();
+        final Flux<D> dtos = crudService.all()
+                .map(this::entityToDTO);
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(entities, entityClass()))
+                .body(BodyInserters.fromPublisher(dtos, dtoClass))
                 .onErrorResume(this::errorResponse);
     }
 
     public Mono<ServerResponse> updateEntity(final ServerRequest request) {
-        final String entityId = request.pathVariable(entityIdField());
-        final Mono<E> entityData = request.body(BodyExtractors.toMono(entityClass()));
-        return entityData
-                .flatMap(entity -> crudService.update(entityId, entity))
-                .flatMap(this::createdEntityResponse)
+        final String dtoId = request.pathVariable(dtoIdField);
+        final Mono<D> dtoData = request.body(BodyExtractors.toMono(dtoClass));
+        return dtoData
+                .map(this::dtoToEntity)
+                .flatMap(entity -> crudService.update(dtoId, entity))
+                .flatMap(this::createdResponse)
                 .onErrorResume(this::errorResponse);
     }
 
@@ -92,8 +103,8 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>> {
         return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
-    protected Mono<ServerResponse> createdEntityResponse(final E entity) {
-        return entityResponse(entity, HttpStatus.CREATED);
+    protected Mono<ServerResponse> createdResponse(final E entity) {
+        return dtoResponse(entity, HttpStatus.CREATED);
     }
 
     protected Mono<ServerResponse> errorResponse(final Throwable t) {
@@ -107,19 +118,20 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>> {
                 .body(BodyInserters.fromValue(errorDTO));
     }
 
-    protected Mono<ServerResponse> foundEntityResponse(final E entity) {
-        return entityResponse(entity, HttpStatus.OK);
+    protected Mono<ServerResponse> foundResponse(final E entity) {
+        return dtoResponse(entity, HttpStatus.OK);
     }
 
-    protected abstract Class<E> entityClass();
+    protected abstract E dtoToEntity(D dto);
 
-    protected abstract String entityIdField();
+    protected abstract D entityToDTO(E entity);
 
-    private Mono<ServerResponse> entityResponse(final E entity, final HttpStatus status) {
+    private Mono<ServerResponse> dtoResponse(final E entity, final HttpStatus status) {
+        final D dto = entityToDTO(entity);
         return ServerResponse
                 .status(status)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(entity));
+                .body(BodyInserters.fromValue(dto));
     }
 
 }

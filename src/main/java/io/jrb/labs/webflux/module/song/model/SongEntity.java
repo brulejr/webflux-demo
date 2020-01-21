@@ -21,14 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.repository;
+package io.jrb.labs.webflux.module.song.model;
 
-import io.jrb.labs.webflux.module.song.model.SongEntity;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import reactor.core.publisher.Mono;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import io.jrb.labs.webflux.common.service.crud.Entity;
+import lombok.Builder;
+import lombok.Value;
+import lombok.With;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-public interface ReactiveSongRepository extends ReactiveMongoRepository<SongEntity, String> {
+import java.util.List;
+import java.util.Map;
 
-    Mono<SongEntity> findFirstByTitle(String title);
+/**
+ * Defines a song.
+ */
+@Document
+@Value
+@Builder(toBuilder = true)
+@JsonDeserialize(builder = SongEntity.SongEntityBuilder.class)
+public class SongEntity implements Entity<SongEntity> {
+
+    @Id
+    @With
+    private final String id;
+
+    private final SongType type;
+
+    private final String title;
+
+    private final List<String> authors;
+
+    private final List<String> additionalTitles;
+
+    private final List<String> themes;
+
+    private final Map<String, List<String>> lyrics;
+
+    private final List<String> lyricOrder;
+
+    private final Source source;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class SongEntityBuilder {
+    }
 
 }

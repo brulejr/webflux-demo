@@ -23,12 +23,12 @@
  */
 package io.jrb.labs.webflux.module.song.service;
 
-import io.jrb.labs.webflux.module.song.model.Song;
+import io.jrb.labs.webflux.module.song.model.SongEntity;
 import org.springframework.context.ApplicationEvent;
 
 public class SongCreatedEvent extends ApplicationEvent {
 
-    public SongCreatedEvent(final Song source) {
+    public SongCreatedEvent(final SongEntity source) {
         super(source);
     }
 

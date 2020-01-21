@@ -21,14 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.repository;
+package io.jrb.labs.webflux.common.web;
 
-import io.jrb.labs.webflux.module.song.model.SongEntity;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import reactor.core.publisher.Mono;
+import java.io.Serializable;
 
-public interface ReactiveSongRepository extends ReactiveMongoRepository<SongEntity, String> {
-
-    Mono<SongEntity> findFirstByTitle(String title);
-
+public interface DTO<D extends DTO> extends Serializable {
 }

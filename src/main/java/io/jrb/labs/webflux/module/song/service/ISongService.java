@@ -24,11 +24,11 @@
 package io.jrb.labs.webflux.module.song.service;
 
 import io.jrb.labs.webflux.common.service.crud.ICrudService;
-import io.jrb.labs.webflux.module.song.model.Song;
+import io.jrb.labs.webflux.module.song.model.SongEntity;
 import reactor.core.publisher.Mono;
 
-public interface ISongService extends ICrudService<Song> {
+public interface ISongService extends ICrudService<SongEntity> {
 
-    Mono<Song> findByTitle(String title);
+    Mono<SongEntity> findByTitle(String title);
 
 }

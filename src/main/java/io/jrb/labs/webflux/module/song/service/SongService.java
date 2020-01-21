@@ -24,7 +24,7 @@
 package io.jrb.labs.webflux.module.song.service;
 
 import io.jrb.labs.webflux.common.service.crud.CrudServiceSupport;
-import io.jrb.labs.webflux.module.song.model.Song;
+import io.jrb.labs.webflux.module.song.model.SongEntity;
 import io.jrb.labs.webflux.module.song.repository.ReactiveSongRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
@@ -35,40 +35,27 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @Slf4j
-public class SongService extends CrudServiceSupport<Song> implements ISongService {
+public class SongService extends CrudServiceSupport<SongEntity> implements ISongService {
 
     private final ReactiveSongRepository repository;
 
     public SongService(final ApplicationEventPublisher publisher, final ReactiveSongRepository repository) {
-        super(publisher, repository);
+        super(publisher, repository, SongEntity.class);
         this.repository = repository;
     }
 
     @Override
-    public Mono<Song> findByTitle(final String title) {
+    public Mono<SongEntity> findByTitle(final String title) {
         return repository.findFirstByTitle(title);
     }
 
     @Override
-    protected Function<Song, ApplicationEvent> createEventSupplier() {
+    protected Function<SongEntity, ApplicationEvent> createEventSupplier() {
         return SongCreatedEvent::new;
     }
 
     @Override
-    protected Class<Song> entityClass() { return Song.class; }
-
-    @Override
-    protected Function<Song, Song> retrieveTransformer() {
-        return orig -> Song.builder()
-                .id(orig.getId())
-                .title(orig.getTitle())
-                .type(orig.getType())
-                .source(orig.getSource())
-                .build();
-    }
-
-    @Override
-    protected BiFunction<Song, Song, Song> updateTransformer() {
+    protected BiFunction<SongEntity, SongEntity, SongEntity> updateTransformer() {
         return (orig, update) ->
                 orig.toBuilder()
                         .additionalTitles(update.getAdditionalTitles())
