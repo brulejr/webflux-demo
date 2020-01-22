@@ -21,14 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.service;
+package io.jrb.labs.webflux.common.service.crud.event;
 
-import io.jrb.labs.webflux.module.song.model.SongEntity;
-import org.springframework.context.ApplicationEvent;
+import io.jrb.labs.webflux.common.service.crud.Entity;
 
-public class SongCreatedEvent extends ApplicationEvent {
+public class CreateEntityEvent<E extends Entity<E>> extends CrudServiceEvent<E> {
 
-    public SongCreatedEvent(final SongEntity source) {
+    public CreateEntityEvent(final E source) {
         super(source);
     }
 

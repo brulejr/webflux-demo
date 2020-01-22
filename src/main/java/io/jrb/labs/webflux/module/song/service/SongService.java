@@ -27,12 +27,10 @@ import io.jrb.labs.webflux.common.service.crud.CrudServiceSupport;
 import io.jrb.labs.webflux.module.song.model.SongEntity;
 import io.jrb.labs.webflux.module.song.repository.ReactiveSongRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import reactor.core.publisher.Mono;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @Slf4j
 public class SongService extends CrudServiceSupport<SongEntity> implements ISongService {
@@ -47,11 +45,6 @@ public class SongService extends CrudServiceSupport<SongEntity> implements ISong
     @Override
     public Mono<SongEntity> findByTitle(final String title) {
         return repository.findFirstByTitle(title);
-    }
-
-    @Override
-    protected Function<SongEntity, ApplicationEvent> createEventSupplier() {
-        return SongCreatedEvent::new;
     }
 
     @Override

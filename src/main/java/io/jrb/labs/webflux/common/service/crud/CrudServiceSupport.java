@@ -23,6 +23,10 @@
  */
 package io.jrb.labs.webflux.common.service.crud;
 
+import io.jrb.labs.webflux.common.service.crud.event.CreateEntityEvent;
+import io.jrb.labs.webflux.common.service.crud.event.DeleteEntityEvent;
+import io.jrb.labs.webflux.common.service.crud.event.GetEntityEvent;
+import io.jrb.labs.webflux.common.service.crud.event.UpdateEntityEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -63,34 +67,58 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
         final E entityToSave = createTransformer().apply(entity);
         return Mono.just(entityToSave)
                 .flatMap(repository::save)
-                .doOnSuccess(e -> publisher.publishEvent(createEventSupplier().apply(e)));
+                .doOnSuccess(e -> publishEvent(createEventSupplier(), e));
     }
 
     @Override
     public Mono<E> delete(final String id) {
-        return get(id).flatMap(d -> repository.deleteById(id).thenReturn(d));
+        return get(id)
+                .flatMap(d -> repository.deleteById(id).thenReturn(d))
+                .doOnSuccess(e -> publishEvent(deleteEventSupplier(), e));
     }
 
     @Override
     public Mono<E> get(final String id) {
         return Mono.just(id)
                 .flatMap(repository::findById)
-                .switchIfEmpty(Mono.error(new UnknownEntityException(entityClass, id)));
+                .switchIfEmpty(Mono.error(new UnknownEntityException(entityClass, id)))
+                .doOnSuccess(e -> publishEvent(getEventSupplier(), e));
     }
 
     @Override
     public Mono<E> update(final String id, final E entity) {
         return get(id)
                 .map(d -> updateTransformer().apply(d, entity))
-                .flatMap(repository::save);
+                .flatMap(repository::save)
+                .doOnSuccess(e -> publishEvent(updateEventSupplier(), e));
     }
 
-    protected abstract Function<E, ApplicationEvent> createEventSupplier();
+    protected Function<E, ApplicationEvent> createEventSupplier() {
+        return CreateEntityEvent::new;
+    }
 
     protected Function<E, E> createTransformer() {
         return orig -> orig.withId(UUID.randomUUID().toString());
     }
 
+    protected Function<E, ApplicationEvent> deleteEventSupplier() {
+        return DeleteEntityEvent::new;
+    }
+
+    protected Function<E, ApplicationEvent> getEventSupplier() {
+        return GetEntityEvent::new;
+    }
+
+    protected Function<E, ApplicationEvent> updateEventSupplier() {
+        return UpdateEntityEvent::new;
+    }
+
     protected abstract BiFunction<E, E, E> updateTransformer();
+
+    private void publishEvent(final Function<E, ApplicationEvent> eventSupplier, final E entity) {
+        if (eventSupplier != null) {
+            publisher.publishEvent(eventSupplier.apply(entity));
+        }
+    }
 
 }
