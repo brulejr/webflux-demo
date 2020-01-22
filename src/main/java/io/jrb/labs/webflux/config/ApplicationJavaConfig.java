@@ -24,6 +24,7 @@
 package io.jrb.labs.webflux.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.jrb.labs.webflux.common.logging.AnnotationDrivenEventListener;
 import io.jrb.labs.webflux.common.web.TraceabilityHeaderNames;
 import io.jrb.labs.webflux.common.web.TraceabilityWebFilter;
 import io.jrb.labs.webflux.module.greeting.GreetingModuleJavaConfig;
@@ -56,6 +57,11 @@ public class ApplicationJavaConfig {
         final Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
         builder.serializationInclusion(JsonInclude.Include.NON_NULL);
         return builder;
+    }
+
+    @Bean
+    public AnnotationDrivenEventListener eventLogger() {
+        return new AnnotationDrivenEventListener();
     }
 
 }
