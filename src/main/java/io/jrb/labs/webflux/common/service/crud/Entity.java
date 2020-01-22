@@ -25,6 +25,11 @@ package io.jrb.labs.webflux.common.service.crud;
 
 import java.io.Serializable;
 
+/**
+ * Defines an entity manageable by an {@link ICrudService} implementation.
+ *
+ * @param <E> the entity type
+ */
 public interface Entity<E extends Entity> extends Serializable {
 
     String getId();

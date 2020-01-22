@@ -26,16 +26,51 @@ package io.jrb.labs.webflux.common.service.crud;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Defines the contract for a reactive service that persists {@link Entity} beans.
+ *
+ * @param <E> the entity class
+ */
 public interface ICrudService<E extends Entity<E>> {
 
+    /**
+     * Retrieve all persisted entities as a reactive stream
+     *
+     * @return a stream publisher of the persisted entities
+     */
     Flux<E> all();
 
+    /**
+     * Persists a new entity.
+     *
+     * @param entity the entity to be created
+     * @return a single-value publisher containing the newly-created entity
+     */
     Mono<E> create(E entity);
 
+    /**
+     * Removes a persisted entity.
+     *
+     * @param id the entity identifier
+     * @return a single-value publisher containing the removed entity
+     */
     Mono<E> delete(String id);
 
+    /**
+     * Retrieves a single persisted entity using its identifier.
+     *
+     * @param id the entity identifier
+     * @return a single-value publisher containing the corresponding entity
+     */
     Mono<E> get(String id);
 
+    /**
+     * Updates a persisted entity.
+     *
+     * @param id the entity identifier
+     * @param entity the entity updates
+     * @return a single-value publisher containing the persisted entity with its new updates applied
+     */
     Mono<E> update(String id, E entity);
 
 }

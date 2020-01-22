@@ -25,6 +25,9 @@ package io.jrb.labs.webflux.common.service.crud;
 
 import java.util.Optional;
 
+/**
+ * Provides a base exception for all {@link ICrudService} errors.
+ */
 public class CrudServiceException extends RuntimeException {
 
     private final String entityId;

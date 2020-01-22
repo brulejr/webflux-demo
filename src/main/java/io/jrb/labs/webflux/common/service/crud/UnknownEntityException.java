@@ -25,6 +25,9 @@ package io.jrb.labs.webflux.common.service.crud;
 
 import static java.text.MessageFormat.format;
 
+/**
+ * Thrown to indicate an attempt to execute a CRUD operation on an unknown entity.
+ */
 public class UnknownEntityException extends CrudServiceException {
 
     public UnknownEntityException(Class<? extends Entity> entityClass, String entityId) {
