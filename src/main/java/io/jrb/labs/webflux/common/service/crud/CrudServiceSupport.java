@@ -40,6 +40,15 @@ import java.util.function.Function;
 
 import static io.jrb.labs.webflux.common.validation.Validation.required;
 
+/**
+ * Provides an opinionated base for a reactive CRUD service that manages entities within a Mongo NoSQL database. This
+ * service provides the following additional functionality:
+ * 1) Create and Update data transformers
+ * 2) Spring application event thrown on any data change (Note: due to the stream nature of the {@link #all()} method,
+ *    no event is fired when it is called)
+ *
+ * @param <E> the managed entity class
+ */
 @Slf4j
 public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudService<E> {
 
@@ -47,6 +56,13 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
     private final ReactiveMongoRepository<E, String> repository;
     private final Class<E> entityClass;
 
+    /**
+     * Constructs a reactive MongoDB CRUD service.
+     *
+     * @param publisher the Spring application event publisher
+     * @param repository the repository that manages the entity
+     * @param entityClass the managed entity classname
+     */
     protected CrudServiceSupport(
             final ApplicationEventPublisher publisher,
             final ReactiveMongoRepository<E, String> repository,
@@ -93,6 +109,12 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
                 .doOnSuccess(e -> publishEvent(updateEventSupplier(), e));
     }
 
+    /**
+     * Override this hook to fire a custom event on the creation of an entity. By default, a {@link CreateEntityEvent}
+     * is thrown.
+     *
+     * @return the custom create entity event
+     */
     protected Function<E, ApplicationEvent> createEventSupplier() {
         return CreateEntityEvent::new;
     }
@@ -101,14 +123,32 @@ public abstract class CrudServiceSupport<E extends Entity<E>> implements ICrudSe
         return orig -> orig.withId(UUID.randomUUID().toString());
     }
 
+    /**
+     * Override this hook to fire a custom event on the deletion of an entity. By default, a {@link DeleteEntityEvent}
+     * is thrown.
+     *
+     * @return the custom create entity event
+     */
     protected Function<E, ApplicationEvent> deleteEventSupplier() {
         return DeleteEntityEvent::new;
     }
 
+    /**
+     * Override this hook to fire a custom event on the retrieval of an entity. By default, a {@link GetEntityEvent}
+     * is thrown.
+     *
+     * @return the custom create entity event
+     */
     protected Function<E, ApplicationEvent> getEventSupplier() {
         return GetEntityEvent::new;
     }
 
+    /**
+     * Override this hook to fire a custom event on the update of an entity. By default, a {@link UpdateEntityEvent}
+     * is thrown.
+     *
+     * @return the custom create entity event
+     */
     protected Function<E, ApplicationEvent> updateEventSupplier() {
         return UpdateEntityEvent::new;
     }
