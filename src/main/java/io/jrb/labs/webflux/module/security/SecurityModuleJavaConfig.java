@@ -29,7 +29,7 @@ import io.jrb.labs.webflux.module.security.web.AuthenticationManager;
 import io.jrb.labs.webflux.module.security.web.JwtTokenProvider;
 import io.jrb.labs.webflux.module.security.web.PBKDF2Encoder;
 import io.jrb.labs.webflux.module.security.web.SecurityContextRepository;
-import io.jrb.labs.webflux.module.security.service.AuthenticationService;
+import io.jrb.labs.webflux.module.security.service.LdapAuthenticationService;
 import io.jrb.labs.webflux.module.security.web.AuthenticationController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -88,7 +88,7 @@ public class SecurityModuleJavaConfig extends ModuleJavaConfigSupport implements
             final LdapTemplate ldapTemplate,
             final PasswordEncoder passwordEncoder
     ) {
-        return new AuthenticationService(ldapConfig, ldapTemplate, passwordEncoder);
+        return new LdapAuthenticationService(ldapConfig, ldapTemplate, passwordEncoder);
     }
 
     @Bean

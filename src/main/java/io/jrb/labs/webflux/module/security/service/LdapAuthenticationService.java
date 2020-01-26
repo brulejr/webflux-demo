@@ -51,13 +51,13 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
  * Provides a service that authenticates and authorizes users against LDAP.
  */
 @Slf4j
-public class AuthenticationService implements IAuthenticationService {
+public class LdapAuthenticationService implements IAuthenticationService {
 
     private final LdapConfig ldapConfig;
     private final LdapTemplate ldapTemplate;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationService(
+    public LdapAuthenticationService(
             final LdapConfig ldapConfig,
             final LdapTemplate ldapTemplate,
             final PasswordEncoder passwordEncoder
