@@ -50,7 +50,11 @@ import reactor.core.publisher.Mono;
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
-@EnableConfigurationProperties({ JwtConfig.class, LdapConfig.class })
+@EnableConfigurationProperties({
+        JwtConfig.class,
+        LdapConfig.class,
+        PasswordEncoderConfig.class
+})
 public class SecurityModuleJavaConfig extends ModuleJavaConfigSupport implements WebFluxConfigurer {
 
     private static final String MODULE_NAME = "Security";
@@ -93,8 +97,8 @@ public class SecurityModuleJavaConfig extends ModuleJavaConfigSupport implements
     }
 
     @Bean
-    public PBKDF2Encoder pbkdf2Encoder(final JwtConfig jwtConfig) {
-        return new PBKDF2Encoder(jwtConfig.passwordEncoder());
+    public PBKDF2Encoder pbkdf2Encoder(final PasswordEncoderConfig passwordEncoderConfig) {
+        return new PBKDF2Encoder(passwordEncoderConfig);
     }
 
     @Bean

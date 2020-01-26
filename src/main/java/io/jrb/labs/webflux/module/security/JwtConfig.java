@@ -37,12 +37,10 @@ public class JwtConfig {
 
     private final String secret;
     private final Long expirationInSec;
-    private final PasswordEncoderConfig passwordEncoder;
 
-    public JwtConfig(final String secret, final Long expirationInSec, final PasswordEncoderConfig passwordEncoder) {
+    public JwtConfig(final String secret, final Long expirationInSec) {
         this.secret = (secret != null) ? secret : randomAlphabetic(67, 67);
         this.expirationInSec = expirationInSec;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public byte[] secretBytes() {

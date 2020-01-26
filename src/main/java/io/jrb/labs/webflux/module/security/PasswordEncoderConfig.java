@@ -25,12 +25,14 @@ package io.jrb.labs.webflux.module.security;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @Accessors(fluent = true) @Getter
 @ConstructorBinding
+@ConfigurationProperties("module.security.password-encoder")
 public class PasswordEncoderConfig {
 
     private final String secret;

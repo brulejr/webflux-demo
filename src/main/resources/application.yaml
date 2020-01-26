@@ -46,9 +46,9 @@ module:
       userBase: ou=people,dc=brule,dc=net
     jwt:
       expirationInSec: 300
-      passwordEncoder:
-        secret: mysecret
-        iteration: 33
-        keylength: 256
+    password-encoder:
+      secret: mysecret
+      iteration: 33
+      keylength: 256
   song:
     enabled: true
