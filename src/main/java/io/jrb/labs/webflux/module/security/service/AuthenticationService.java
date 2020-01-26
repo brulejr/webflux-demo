@@ -26,7 +26,6 @@ package io.jrb.labs.webflux.module.security.service;
 import com.google.common.collect.ImmutableList;
 import io.jrb.labs.webflux.module.security.LdapConfig;
 import io.jrb.labs.webflux.module.security.model.User;
-import io.jrb.labs.webflux.module.security.web.PBKDF2Encoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
@@ -39,6 +38,7 @@ import org.springframework.ldap.filter.OrFilter;
 import org.springframework.ldap.support.LdapUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -46,17 +46,20 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
+/**
+ * Provides a service that authenticates and authorizes users against LDAP.
+ */
 @Slf4j
 public class AuthenticationService implements IAuthenticationService {
 
     private final LdapConfig ldapConfig;
     private final LdapTemplate ldapTemplate;
-    private final PBKDF2Encoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthenticationService(
             final LdapConfig ldapConfig,
             final LdapTemplate ldapTemplate,
-            final PBKDF2Encoder passwordEncoder
+            final PasswordEncoder passwordEncoder
     ) {
         this.ldapConfig = ldapConfig;
         this.ldapTemplate = ldapTemplate;

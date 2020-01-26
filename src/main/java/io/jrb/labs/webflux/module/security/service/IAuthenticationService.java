@@ -26,8 +26,18 @@ package io.jrb.labs.webflux.module.security.service;
 import io.jrb.labs.webflux.module.security.model.User;
 import reactor.core.publisher.Mono;
 
+/**
+ * Defines a reactive authentication service that integrates with Spring Security.
+ */
 public interface IAuthenticationService {
 
+    /**
+     * Authenticates user credentials.
+     *
+     * @param username the user identifier
+     * @param password the corresponding password
+     * @return a populated user, if authentication succeeds
+     */
     Mono<User> authenticate(String username, String password);
 
 }

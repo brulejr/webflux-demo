@@ -41,6 +41,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
@@ -85,9 +86,8 @@ public class SecurityModuleJavaConfig extends ModuleJavaConfigSupport implements
     public IAuthenticationService authenticationService(
             final LdapConfig ldapConfig,
             final LdapTemplate ldapTemplate,
-            final PBKDF2Encoder passwordEncoder
+            final PasswordEncoder passwordEncoder
     ) {
-
         return new AuthenticationService(ldapConfig, ldapTemplate, passwordEncoder);
     }
 
@@ -97,7 +97,7 @@ public class SecurityModuleJavaConfig extends ModuleJavaConfigSupport implements
     }
 
     @Bean
-    public PBKDF2Encoder pbkdf2Encoder(final PasswordEncoderConfig passwordEncoderConfig) {
+    public PasswordEncoder passwordEncoder(final PasswordEncoderConfig passwordEncoderConfig) {
         return new PBKDF2Encoder(passwordEncoderConfig);
     }
 
