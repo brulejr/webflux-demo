@@ -34,7 +34,7 @@ objectclass: inetOrgPerson
 cn: Jon Brule
 sn: Brule
 uid: jbrule
-userPassword: $2a$04$hgI8OjNQ8QwhphrfWmbvguTd4d4u7Iho972OOFEE7IefVonLLa3gi
+userPassword: cBrlgyL2GI2GINuLUUwgojITuIufFycpLG4490dhGtY=
 
 dn: uid=user,ou=people,dc=brule,dc=net
 objectclass: top
@@ -62,7 +62,6 @@ objectclass: groupOfUniqueNames
 cn: admins
 ou: admin
 uniqueMember: uid=admin,ou=people,dc=brule,dc=net
-uniqueMember: uid=jbrule,ou=people,dc=brule,dc=net
 
 dn: cn=developers,ou=groups,dc=brule,dc=net
 objectclass: top
@@ -70,3 +69,45 @@ objectclass: groupOfUniqueNames
 cn: developers
 ou: developer
 uniqueMember: uid=jbrule,ou=people,dc=brule,dc=net
+
+# Application
+dn: dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: extensibleObject
+dc: apps
+
+dn: dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: extensibleObject
+dc: webflux-demo
+
+dn: ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: organizationalUnit
+ou: permissions
+
+dn: cn=SONG_CREATE,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: SONG_CREATE
+uniqueMember: cn=admins,ou=groups,dc=brule,dc=net
+
+dn: cn=SONG_READ,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: SONG_READ
+uniqueMember: cn=admins,ou=groups,dc=brule,dc=net
+uniqueMember: cn=users,ou=groups,dc=brule,dc=net
+
+dn: cn=SONG_UPDATE,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: SONG_UPDATE
+uniqueMember: cn=admins,ou=groups,dc=brule,dc=net
+uniqueMember: uid=jbrule,ou=people,dc=brule,dc=net
+
+dn: cn=SONG_DELETE,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: SONG_DELETE
+uniqueMember: cn=admins,ou=groups,dc=brule,dc=net
