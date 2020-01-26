@@ -23,6 +23,7 @@
  */
 package io.jrb.labs.webflux.module.security;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,6 +31,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
+@AllArgsConstructor
 @Accessors(fluent = true) @Getter
 @ConstructorBinding
 @ConfigurationProperties("module.security.password-encoder")
@@ -38,12 +40,6 @@ public class PasswordEncoderConfig {
     private final String secret;
     private final Integer iteration;
     private final Integer keyLength;
-
-    public PasswordEncoderConfig(final String secret, final Integer iteration, final Integer keyLength) {
-        this.secret = (secret != null) ? secret : randomAlphabetic(8, 8);
-        this.iteration = iteration;
-        this.keyLength = keyLength;
-    }
 
     public byte[] secretBytes() {
         return (secret != null) ? secret.getBytes() : null;

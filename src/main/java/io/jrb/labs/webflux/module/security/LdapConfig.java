@@ -23,11 +23,13 @@
  */
 package io.jrb.labs.webflux.module.security;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
+@AllArgsConstructor
 @Accessors(fluent = true) @Getter
 @ConstructorBinding
 @ConfigurationProperties("module.security.ldap")
@@ -39,21 +41,5 @@ public class LdapConfig {
     private final String groupBase;
     private final String permissionsBase;
     private final String userBase;
-
-    public LdapConfig(
-            final String applicationBase,
-            final String authorityPrefixPermission,
-            final String authorityPrefixRole,
-            final String groupBase,
-            final String permissionsBase,
-            final String userBase
-    ) {
-        this.applicationBase = applicationBase;
-        this.authorityPrefixPermission = authorityPrefixPermission;
-        this.authorityPrefixRole = authorityPrefixRole;
-        this.groupBase = groupBase;
-        this.permissionsBase = permissionsBase;
-        this.userBase = userBase;
-    }
 
 }
