@@ -35,15 +35,16 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.OrFilter;
-import org.springframework.ldap.support.LdapUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
-import static java.lang.String.format;
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
 /**
@@ -83,15 +84,11 @@ public class AuthenticationService implements IAuthenticationService {
     }
 
     private List<GrantedAuthority> buildAuthoryList(final List<String> groupDns, final List<String> permissionDns) {
+        final Map<String, String> authorityFilter = ldapConfig.authorityFilter();
         final ImmutableList.Builder<GrantedAuthority> builder = ImmutableList.builder();
-        groupDns.stream()
-                .map(LdapUtils::newLdapName)
-                .map(name -> LdapUtils.getStringValue(name, "cn"))
-                .map(group -> format("%s%s", ldapConfig.authorityPrefixRole(), group.toUpperCase()))
-                .map((SimpleGrantedAuthority::new))
-                .forEach(builder::add);
-        permissionDns.stream()
-                .map(group -> format("%s%s", ldapConfig.authorityPrefixPermission(), group.toUpperCase()))
+        Stream.concat(groupDns.stream(), permissionDns.stream())
+                .map(authorityFilter::get)
+                .filter(Objects::nonNull)
                 .map((SimpleGrantedAuthority::new))
                 .forEach(builder::add);
         return builder.build();
@@ -115,7 +112,7 @@ public class AuthenticationService implements IAuthenticationService {
         final List<String> permDns = ldapTemplate.search(
                 ldapConfig.permissionsBase(),
                 filter.toString(),
-                (AttributesMapper<String>) attrs -> (String) attrs.get("cn").get()
+                (AttributesMapper<String>) attrs -> (String) attrs.get("entryDN").get()
         );
         log.debug("*** permDns = {}", permDns);
         return ImmutableList.copyOf(permDns);

@@ -44,6 +44,13 @@ module:
       permissionsBase: ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
       groupBase: ou=groups,dc=brule,dc=net
       userBase: ou=people,dc=brule,dc=net
+      authorityFilter:
+        PERM_SONG_CREATE: cn=song_create,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+        PERM_SONG_READ: cn=song_read,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+        PERM_SONG_UPDATE: cn=song_update,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+        PERM_SONG_DELETE: cn=song_delete,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+        ROLE_ADMIN: cn=admins,ou=groups,dc=brule,dc=net
+
     jwt:
       expirationInSec: 300
     password-encoder:
