@@ -39,8 +39,6 @@ module:
   security:
     ldap:
       applicationBase: dc=webflux-demo,dc=apps,dc=brule,dc=net
-      authorityPrefixPermission: PERM_
-      authorityPrefixRole: ROLE_
       permissionsBase: ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
       groupBase: ou=groups,dc=brule,dc=net
       userBase: ou=people,dc=brule,dc=net

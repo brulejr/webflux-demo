@@ -38,8 +38,6 @@ import java.util.Map;
 public class LdapConfig {
 
     private final String applicationBase;
-    private final String authorityPrefixPermission;
-    private final String authorityPrefixRole;
     private final String groupBase;
     private final String permissionsBase;
     private final String userBase;
@@ -47,16 +45,12 @@ public class LdapConfig {
 
     public LdapConfig(
             final String applicationBase,
-            final String authorityPrefixPermission,
-            final String authorityPrefixRole,
             final String groupBase,
             final String permissionsBase,
             final String userBase,
             final Map<String, String> authorityFilter
     ) {
         this.applicationBase = applicationBase;
-        this.authorityPrefixPermission = authorityPrefixPermission;
-        this.authorityPrefixRole = authorityPrefixRole;
         this.groupBase = groupBase;
         this.permissionsBase = permissionsBase;
         this.userBase = userBase;
