@@ -24,17 +24,51 @@
 package io.jrb.labs.webflux.module.song.web;
 
 import io.jrb.labs.webflux.common.web.CrudWebHandlerSupport;
-import io.jrb.labs.webflux.module.song.model.SongMetadata;
 import io.jrb.labs.webflux.module.song.model.Song;
 import io.jrb.labs.webflux.module.song.model.SongEntity;
+import io.jrb.labs.webflux.module.song.model.SongMetadata;
 import io.jrb.labs.webflux.module.song.service.ISongService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 public class SongWebHandler extends CrudWebHandlerSupport<SongEntity, Song, SongMetadata> {
 
     public SongWebHandler(final ISongService songService) {
         super(songService, Song.class, SongMetadata.class, "songId");
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('PERM_SONG_CREATE')")
+    public Mono<ServerResponse> createEntity(ServerRequest request) {
+        return super.createEntity(request);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('PERM_SONG_DELETE')")
+    public Mono<ServerResponse> deleteEntity(ServerRequest request) {
+        return super.deleteEntity(request);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('PERM_SONG_READ')")
+    public Mono<ServerResponse> getEntity(ServerRequest request) {
+        return super.getEntity(request);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('PERM_SONG_READ')")
+    public Mono<ServerResponse> retrieveEntities(ServerRequest request) {
+        return super.retrieveEntities(request);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('PERM_SONG_UPDATE')")
+    public Mono<ServerResponse> updateEntity(ServerRequest request) {
+        return super.updateEntity(request);
     }
 
     @Override
