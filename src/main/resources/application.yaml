@@ -43,6 +43,10 @@ module:
       groupBase: ou=groups,dc=brule,dc=net
       userBase: ou=people,dc=brule,dc=net
       authorityFilter:
+        PERM_SETLIST_CREATE: cn=setlist_create,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+        PERM_SETLIST_READ: cn=setlist_read,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+        PERM_SETLIST_UPDATE: cn=setlist_update,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+        PERM_SETLIST_DELETE: cn=setlist_delete,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
         PERM_SONG_CREATE: cn=song_create,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
         PERM_SONG_READ: cn=song_read,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
         PERM_SONG_UPDATE: cn=song_update,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net

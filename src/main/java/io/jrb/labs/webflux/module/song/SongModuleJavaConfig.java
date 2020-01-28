@@ -24,9 +24,13 @@
 package io.jrb.labs.webflux.module.song;
 
 import io.jrb.labs.webflux.common.module.ModuleJavaConfigSupport;
+import io.jrb.labs.webflux.module.song.repository.ReactiveSetListRepository;
 import io.jrb.labs.webflux.module.song.repository.ReactiveSongRepository;
+import io.jrb.labs.webflux.module.song.service.ISetListService;
 import io.jrb.labs.webflux.module.song.service.ISongService;
+import io.jrb.labs.webflux.module.song.service.SetListService;
 import io.jrb.labs.webflux.module.song.service.SongService;
+import io.jrb.labs.webflux.module.song.web.SetListWebHandler;
 import io.jrb.labs.webflux.module.song.web.SongWebHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -80,6 +84,47 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::updateEntity
         );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> setListEndpoints(final SetListWebHandler setListWebHandler) {
+        return RouterFunctions.route(
+                RequestPredicates
+                        .POST("/setlist")
+                        .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                setListWebHandler::createEntity
+        ).andRoute(
+                RequestPredicates
+                        .DELETE("/setlist/{setlistId}")
+                        .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                setListWebHandler::deleteEntity
+        ).andRoute(
+                RequestPredicates
+                        .GET("/setlist/{setlistId}")
+                        .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                setListWebHandler::getEntity
+        ).andRoute(
+                RequestPredicates
+                        .GET("/setlist")
+                        .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                setListWebHandler::retrieveEntities
+        ).andRoute(
+                RequestPredicates
+                        .PUT("/setlist/{setlistId}")
+                        .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                setListWebHandler::updateEntity
+        );
+    }
+
+    @Bean
+    public SetListWebHandler setListWebHandler(final ISetListService setListService) {
+        return new SetListWebHandler(setListService);
+    }
+
+    @Bean
+    public ISetListService setListService(
+            final ApplicationEventPublisher publisher, final ReactiveSetListRepository setListRepository) {
+        return new SetListService(publisher, setListRepository);
     }
 
     @Bean

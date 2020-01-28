@@ -86,11 +86,39 @@ objectclass: top
 objectclass: organizationalUnit
 ou: permissions
 
+dn: cn=setlist_create,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: song_create
+uniqueMember: cn=admins,ou=groups,dc=brule,dc=net
+uniqueMember: uid=jbrule,ou=people,dc=brule,dc=net
+
+dn: cn=setlist_read,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: setlist_read
+uniqueMember: cn=admins,ou=groups,dc=brule,dc=net
+uniqueMember: cn=users,ou=groups,dc=brule,dc=net
+
+dn: cn=setlist_update,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: song_update
+uniqueMember: cn=admins,ou=groups,dc=brule,dc=net
+uniqueMember: uid=jbrule,ou=people,dc=brule,dc=net
+
+dn: cn=setlist_delete,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: song_delete
+uniqueMember: cn=admins,ou=groups,dc=brule,dc=net
+
 dn: cn=song_create,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
 objectclass: top
 objectclass: groupOfUniqueNames
 cn: song_create
 uniqueMember: cn=admins,ou=groups,dc=brule,dc=net
+uniqueMember: uid=jbrule,ou=people,dc=brule,dc=net
 
 dn: cn=song_read,ou=permissions,dc=webflux-demo,dc=apps,dc=brule,dc=net
 objectclass: top
