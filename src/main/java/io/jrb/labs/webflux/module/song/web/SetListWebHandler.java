@@ -26,6 +26,7 @@ package io.jrb.labs.webflux.module.song.web;
 import io.jrb.labs.webflux.common.web.CrudWebHandlerSupport;
 import io.jrb.labs.webflux.module.song.model.SetList;
 import io.jrb.labs.webflux.module.song.model.SetListEntity;
+import io.jrb.labs.webflux.module.song.model.SetListEntityConverter;
 import io.jrb.labs.webflux.module.song.model.SetListMetadata;
 import io.jrb.labs.webflux.module.song.service.ISetListService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +38,11 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class SetListWebHandler extends CrudWebHandlerSupport<SetListEntity, SetList, SetListMetadata> {
 
-    public SetListWebHandler(final ISetListService songService) {
-        super(songService, SetList.class, SetListMetadata.class, "setlistId");
+    public SetListWebHandler(
+            final ISetListService songService,
+            final SetListEntityConverter setListEntityConverter
+    ) {
+        super(songService, setListEntityConverter, SetList.class, SetListMetadata.class, "setlistId");
     }
 
     @Override
@@ -69,32 +73,6 @@ public class SetListWebHandler extends CrudWebHandlerSupport<SetListEntity, SetL
     @PreAuthorize("hasAuthority('PERM_SETLIST_UPDATE')")
     public Mono<ServerResponse> updateEntity(ServerRequest request) {
         return super.updateEntity(request);
-    }
-
-    @Override
-    protected SetListEntity dtoToEntity(final SetList dto) {
-        return SetListEntity.builder()
-                .id(dto.getId())
-                .name(dto.getName())
-                .songs(dto.getSongs())
-                .build();
-    }
-
-    @Override
-    protected SetList entityToDto(final SetListEntity entity) {
-        return SetList.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .songs(entity.getSongs())
-                .build();
-    }
-
-    @Override
-    protected SetListMetadata entityToMetadata(final SetListEntity entity) {
-        return SetListMetadata.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .build();
     }
 
 }

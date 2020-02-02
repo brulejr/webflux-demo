@@ -12,6 +12,8 @@ spring:
       port: 12345
       validation:
         enabled: false
+  profiles:
+    active: demo
 
 management:
   endpoints:
@@ -61,3 +63,8 @@ module:
       keylength: 256
   song:
     enabled: true
+    demo:
+      directories:
+        songs: classpath:/data/songs
+  workflow:
+    claimTicketNumberHeader: x-claim-ticket-number

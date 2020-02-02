@@ -1,6 +1,6 @@
 plugins {
-	id 'org.springframework.boot' version '2.2.2.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'org.springframework.boot' version '2.2.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
 }
 
@@ -9,10 +9,6 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
-	developmentOnly
-	runtimeClasspath {
-		extendsFrom developmentOnly
-	}
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -25,23 +21,21 @@ repositories {
 dependencies {
 	implementation "com.google.guava:guava:${GUAVA_VERSION}"
 	implementation "com.unboundid:unboundid-ldapsdk"
+	implementation "commons-io:commons-io:2.6"
+	implementation "de.flapdoodle.embed:de.flapdoodle.embed.mongo"
 	implementation "io.jsonwebtoken:jjwt-api:${JSONWEBTOKEN_VERSION}"
+	implementation "io.jsonwebtoken:jjwt-impl:${JSONWEBTOKEN_VERSION}"
+	implementation "io.jsonwebtoken:jjwt-jackson:${JSONWEBTOKEN_VERSION}"
 	implementation "org.apache.commons:commons-lang3"
 	implementation "org.apache.pdfbox:pdfbox:${PDFBOX_VERSION}"
 	implementation "org.springframework.boot:spring-boot-configuration-processor"
 	implementation "org.springframework.boot:spring-boot-starter-actuator"
 	implementation "org.springframework.boot:spring-boot-starter-data-mongodb-reactive"
-	implementation "org.springframework.boot:spring-boot-starter-ldap"
 	implementation "org.springframework.boot:spring-boot-starter-security"
 	implementation "org.springframework.boot:spring-boot-starter-webflux"
 	implementation "org.springframework.security:spring-security-ldap"
-	implementation "de.flapdoodle.embed:de.flapdoodle.embed.mongo"
-
-	runtime "io.jsonwebtoken:jjwt-impl:${JSONWEBTOKEN_VERSION}"
-	runtime "io.jsonwebtoken:jjwt-jackson:${JSONWEBTOKEN_VERSION}"
 
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {

@@ -24,6 +24,7 @@
 package io.jrb.labs.webflux.common.web;
 
 import io.jrb.labs.webflux.common.service.crud.Entity;
+import io.jrb.labs.webflux.common.service.crud.EntityConverter;
 import io.jrb.labs.webflux.common.service.crud.ICrudService;
 import io.jrb.labs.webflux.common.service.crud.UnknownEntityException;
 import org.springframework.http.HttpStatus;
@@ -38,17 +39,20 @@ import reactor.core.publisher.Mono;
 public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D>, M extends DTO<M>> {
 
     private final ICrudService<E> crudService;
+    private final EntityConverter<E, D, M> entityConverter;
     private final Class<D> dtoClass;
     private final Class<M> dtoMetadataClass;
     private final String dtoIdField;
 
     protected CrudWebHandlerSupport(
             final ICrudService<E> crudService,
+            final EntityConverter<E, D, M> entityConverter,
             final Class<D> dtoClass,
             final Class<M> dtoMetadataClass,
             final String dtoIdField
     ) {
         this.crudService = crudService;
+        this.entityConverter = entityConverter;
         this.dtoClass = dtoClass;
         this.dtoMetadataClass = dtoMetadataClass;
         this.dtoIdField = dtoIdField;
@@ -57,7 +61,7 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D
     public Mono<ServerResponse> createEntity(final ServerRequest request) {
         final Mono<D> dtoData = request.body(BodyExtractors.toMono(dtoClass));
         return dtoData
-                .map(this::dtoToEntity)
+                .map(entityConverter::dtoToEntity)
                 .flatMap(crudService::create)
                 .flatMap(this::createdResponse)
                 .onErrorResume(this::errorResponse);
@@ -81,7 +85,7 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D
 
     public Mono<ServerResponse> retrieveEntities(final ServerRequest request) {
         final Flux<M> dtos = crudService.all()
-                .map(this::entityToMetadata);
+                .map(entityConverter::entityToMetadata);
         return ServerResponse
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +97,7 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D
         final String dtoId = request.pathVariable(dtoIdField);
         final Mono<D> dtoData = request.body(BodyExtractors.toMono(dtoClass));
         return dtoData
-                .map(this::dtoToEntity)
+                .map(entityConverter::dtoToEntity)
                 .flatMap(entity -> crudService.update(dtoId, entity))
                 .flatMap(this::createdResponse)
                 .onErrorResume(this::errorResponse);
@@ -125,14 +129,8 @@ public abstract class CrudWebHandlerSupport<E extends Entity<E>, D extends DTO<D
         return dtoResponse(entity, HttpStatus.OK);
     }
 
-    protected abstract E dtoToEntity(D dto);
-
-    protected abstract D entityToDto(E entity);
-
-    protected abstract M entityToMetadata(E entity);
-
     private Mono<ServerResponse> dtoResponse(final E entity, final HttpStatus status) {
-        final D dto = entityToDto(entity);
+        final D dto = entityConverter.entityToDto(entity);
         return ServerResponse
                 .status(status)
                 .contentType(MediaType.APPLICATION_JSON)

@@ -23,7 +23,11 @@
  */
 package io.jrb.labs.webflux.module.song;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jrb.labs.webflux.common.module.ModuleJavaConfigSupport;
+import io.jrb.labs.webflux.module.song.demo.SampleDataInitializer;
+import io.jrb.labs.webflux.module.song.model.SetListEntityConverter;
+import io.jrb.labs.webflux.module.song.model.SongEntityConverter;
 import io.jrb.labs.webflux.module.song.repository.ReactiveSetListRepository;
 import io.jrb.labs.webflux.module.song.repository.ReactiveSongRepository;
 import io.jrb.labs.webflux.module.song.service.ISetListService;
@@ -33,11 +37,14 @@ import io.jrb.labs.webflux.module.song.service.SongService;
 import io.jrb.labs.webflux.module.song.web.SetListWebHandler;
 import io.jrb.labs.webflux.module.song.web.SongWebHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -54,6 +61,17 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
 
     public SongModuleJavaConfig() {
         super(MODULE_NAME, log);
+    }
+
+    @Bean
+    @Profile("demo")
+    public SampleDataInitializer sampleDataInitializer(
+            final ReactiveSongRepository songRepository,
+            final SongEntityConverter songEntityConverter,
+            final ObjectMapper objectMapper,
+            @Value("${module.song.demo.directories.songs}")final Resource songsDirectory
+    ) {
+        return new SampleDataInitializer(songRepository, songEntityConverter, objectMapper, songsDirectory);
     }
 
     @Bean
@@ -117,8 +135,14 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
     }
 
     @Bean
-    public SetListWebHandler setListWebHandler(final ISetListService setListService) {
-        return new SetListWebHandler(setListService);
+    public SetListEntityConverter setListEntityConverter() { return new SetListEntityConverter(); }
+
+    @Bean
+    public SetListWebHandler setListWebHandler(
+            final ISetListService setListService,
+            final SetListEntityConverter setListEntityConverter
+    ) {
+        return new SetListWebHandler(setListService, setListEntityConverter);
     }
 
     @Bean
@@ -128,8 +152,14 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
     }
 
     @Bean
-    public SongWebHandler songWebHandler(final ISongService songService) {
-        return new SongWebHandler(songService);
+    public SongEntityConverter songEntityConverter() { return new SongEntityConverter(); }
+
+    @Bean
+    public SongWebHandler songWebHandler(
+            final ISongService songService,
+            final SongEntityConverter songEntityConverter
+    ) {
+        return new SongWebHandler(songService, songEntityConverter);
     }
 
     @Bean

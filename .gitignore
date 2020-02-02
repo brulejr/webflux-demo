@@ -30,3 +30,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Mac files ###
+.DS_Store
+
+src/main/resources/data/songs
