@@ -23,14 +23,11 @@
  */
 package io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow;
 
+import io.jrb.labs.webflux.common.poi.POIUtils;
 import io.jrb.labs.webflux.module.song.model.SongEntity;
 import io.jrb.labs.webflux.module.song.service.ISongService;
-import io.jrb.labs.webflux.common.poi.POIUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
@@ -39,12 +36,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import static io.jrb.labs.webflux.common.poi.POIUtils.createSlide;
 import static io.jrb.labs.webflux.common.poi.POIUtils.createSlides;
+import static io.jrb.labs.webflux.common.poi.POIUtils.createTextRectangle;
 import static io.jrb.labs.webflux.common.poi.POIUtils.writeSlideShowAsBytes;
 
 @Slf4j
@@ -81,9 +77,14 @@ public class BuildSlideShowCommand implements IBuildSlideShowCommand {
 
     private void addSong(final XMLSlideShow xss, final SongEntity songEntity) {
         for (final String stanzaName : songEntity.getLyricOrder()) {
-            log.info("Adding stanzaName '{}'", stanzaName);
             final XSLFSlide slide = createSlide(xss, config.blankLayout());
-            final XSLFTextParagraph paragraph = createTextRectangle(xss, slide);
+            final XSLFTextParagraph paragraph = createTextRectangle(
+                    xss, slide,
+                    config.margins().left(),
+                    config.margins().top(),
+                    config.margins().right(),
+                    config.margins().bottom()
+            );
             final List<String> stanzaText = songEntity.getLyrics().get(stanzaName);
             for (final String line : stanzaText) {
                 final XSLFTextRun textRun = paragraph.addNewTextRun();
@@ -99,20 +100,5 @@ public class BuildSlideShowCommand implements IBuildSlideShowCommand {
         return POIUtils.createSlideshow(config.masterTemplate(), config.leaderSlides());
     }
 
-    private XSLFTextParagraph createTextRectangle(final XMLSlideShow xss, final XSLFSlide slide) {
-        final Dimension pageSize =  xss.getPageSize();
-        final float x = config.margins().left();
-        final float y = config.margins().top();
-        final float w = (float) pageSize.getWidth() - x - config.margins().right();
-        final float h = (float) pageSize.getHeight() - y - config.margins().bottom();
-        final XSLFAutoShape body = slide.createAutoShape();
-        body.setShapeType(ShapeType.RECT);
-        body.setAnchor(new Rectangle2D.Float(x, y, w, h));
-        body.clearText();
-        final XSLFTextParagraph paragraph = body.addNewTextParagraph();
-        paragraph.setTextAlign(TextParagraph.TextAlign.CENTER);
-        paragraph.setBullet(false);
-        return paragraph;
-    }
 
 }

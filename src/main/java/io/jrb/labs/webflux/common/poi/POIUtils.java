@@ -111,6 +111,40 @@ public final class POIUtils {
     }
 
     /**
+     * Creates a rectangular text paragraph on the given slide.
+     *
+     * @param xss the slideshow
+     * @param slide the slide to modify
+     * @param marginLeft the left margin
+     * @param marginTop the top margin
+     * @param marginRight the right margin
+     * @param marginBottom the bottom margin
+     * @return the paragraph
+     */
+    public static XSLFTextParagraph createTextRectangle(
+            final XMLSlideShow xss,
+            final XSLFSlide slide,
+            final int marginLeft,
+            final int marginTop,
+            final int marginRight,
+            final int marginBottom
+    ) {
+        final Dimension pageSize =  xss.getPageSize();
+        final float x = marginLeft;
+        final float y = marginTop;
+        final float w = (float) pageSize.getWidth() - x - marginRight;
+        final float h = (float) pageSize.getHeight() - y - marginBottom;
+        final XSLFAutoShape body = slide.createAutoShape();
+        body.setShapeType(ShapeType.RECT);
+        body.setAnchor(new Rectangle2D.Float(x, y, w, h));
+        body.clearText();
+        final XSLFTextParagraph paragraph = body.addNewTextParagraph();
+        paragraph.setTextAlign(TextParagraph.TextAlign.CENTER);
+        paragraph.setBullet(false);
+        return paragraph;
+    }
+
+    /**
      * Generates a byte array (raw content) of a slideshow.
      *
      * @param xss the slideshow
@@ -125,4 +159,5 @@ public final class POIUtils {
         }
 
     }
+
 }
