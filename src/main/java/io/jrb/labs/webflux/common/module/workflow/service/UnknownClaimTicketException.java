@@ -21,17 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.common.module.workflow.service;
 
-import lombok.Builder;
-import lombok.Value;
+public class UnknownClaimTicketException extends WorkflowUserException {
 
-@Value
-@Builder
-public class ErrorDTO {
+    private final String claimTicketNumber;
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+    public UnknownClaimTicketException(final String claimTicketNumber) {
+        super("Unable to find workflow state for claim ticket [" + claimTicketNumber + "]");
+        this.claimTicketNumber = claimTicketNumber;
+    }
+
+    public String getClaimTicketNumber() {
+        return claimTicketNumber;
+    }
 
 }

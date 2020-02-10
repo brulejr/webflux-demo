@@ -25,6 +25,7 @@ package io.jrb.labs.webflux.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.jrb.labs.webflux.common.logging.AnnotationDrivenEventListener;
+import io.jrb.labs.webflux.common.module.workflow.EnableWorkflowEngine;
 import io.jrb.labs.webflux.common.web.TraceabilityHeaderNames;
 import io.jrb.labs.webflux.common.web.TraceabilityWebFilter;
 import io.jrb.labs.webflux.module.greeting.GreetingModuleJavaConfig;
@@ -45,6 +46,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
         SecurityModuleJavaConfig.class,
         SongModuleJavaConfig.class
 })
+@EnableWorkflowEngine
 public class ApplicationJavaConfig {
 
     @Bean

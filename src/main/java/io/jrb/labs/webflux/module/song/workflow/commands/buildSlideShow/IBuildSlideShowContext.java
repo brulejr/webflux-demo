@@ -21,17 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow;
 
-import lombok.Builder;
-import lombok.Value;
+import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
+import io.jrb.labs.webflux.module.song.model.SetListEntity;
+import io.jrb.labs.webflux.module.song.model.SongEntity;
+import org.springframework.http.MediaType;
 
-@Value
-@Builder
-public class ErrorDTO {
+import java.util.Map;
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+public interface IBuildSlideShowContext extends IWorkflowContext {
+
+    SetListEntity getSetListEntity();
+
+    Map<String, SongEntity> getSongs();
+
+    IBuildSlideShowContext setContent(byte[] content);
+
+    IBuildSlideShowContext setContentType(MediaType contentType);
 
 }

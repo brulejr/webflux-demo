@@ -21,17 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.core.io.Resource;
 
-@Value
-@Builder
-public class ErrorDTO {
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+@Accessors(fluent = true) @Getter
+@AllArgsConstructor
+@ConstructorBinding
+@ConfigurationProperties("module.song.build-slide-show")
+public class BuildSlideShowConfig {
+
+    private final String blankLayout;
+    private final double fontSize;
+    private final String[] leaderSlides;
+    private final Margins margins;
+    private final Resource masterTemplate;
+    private final String[] trailerSlides;
+
+    @Accessors(fluent = true) @Getter
+    @AllArgsConstructor
+    @ConstructorBinding
+    public static class Margins {
+        private final int top;
+        private final int bottom;
+        private final int left;
+        private final int right;
+
+    }
 
 }

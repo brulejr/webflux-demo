@@ -21,17 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.module.song.workflow.commands.findSetList;
 
-import lombok.Builder;
-import lombok.Value;
+import io.jrb.labs.webflux.module.song.service.ISetListService;
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
-@Value
-@Builder
-public class ErrorDTO {
+@Slf4j
+public class FindSetListCommand implements IFindSetListCommand {
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+    private final ISetListService setListService;
+
+    public FindSetListCommand(final ISetListService setListService) {
+        this.setListService = setListService;
+    }
+
+    @Override
+    public Mono<IFindSetListContext> run(final IFindSetListContext context) {
+        return setListService.findByName(context.getSetListName())
+                .map(context::setSetListEntity);
+    }
 
 }

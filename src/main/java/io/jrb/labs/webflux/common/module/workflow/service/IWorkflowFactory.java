@@ -21,17 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.common.module.workflow.service;
 
-import lombok.Builder;
-import lombok.Value;
+import reactor.core.publisher.Mono;
 
-@Value
-@Builder
-public class ErrorDTO {
+public interface IWorkflowFactory<C extends IWorkflowContext> {
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+    Mono<C> createWorkflow(C initialContext);
 
 }

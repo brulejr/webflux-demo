@@ -21,17 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.common.module.workflow.service;
 
-import lombok.Builder;
-import lombok.Value;
+public class WorkflowUserException extends WorkflowException {
 
-@Value
-@Builder
-public class ErrorDTO {
+    public WorkflowUserException(final String message) {
+        super(message);
+    }
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+    public WorkflowUserException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public WorkflowUserException(final String message, final Throwable cause, final IWorkflowContext context) {
+        super(message, cause, context);
+    }
 
 }

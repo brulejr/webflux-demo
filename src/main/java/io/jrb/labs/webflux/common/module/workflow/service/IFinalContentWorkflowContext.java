@@ -21,17 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.common.module.workflow.service;
 
-import lombok.Builder;
-import lombok.Value;
+import org.springframework.http.MediaType;
 
-@Value
-@Builder
-public class ErrorDTO {
+public interface IFinalContentWorkflowContext<T> {
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+    T getFinalContent();
+
+    MediaType getFinalContentType();
 
 }

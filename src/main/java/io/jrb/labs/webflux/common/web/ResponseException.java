@@ -23,15 +23,35 @@
  */
 package io.jrb.labs.webflux.common.web;
 
-import lombok.Builder;
-import lombok.Value;
+import com.google.common.collect.ImmutableMap;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-@Value
-@Builder
-public class ErrorDTO {
+import java.util.Map;
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+public class ResponseException extends ResponseStatusException {
+
+    private final Map<String, String> metadata;
+    private final ErrorDTO error;
+
+    public ResponseException(final HttpStatus status, final Map<String, String> metadata, final ErrorDTO error) {
+        super(status, error.getDescription());
+        this.metadata = ImmutableMap.copyOf(metadata);
+        this.error = error;
+    }
+
+    public ResponseException(final HttpStatus status, final ErrorDTO error) {
+        super(status, error.getDescription());
+        this.metadata = ImmutableMap.of();
+        this.error = error;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public ErrorDTO getError() {
+        return error;
+    }
 
 }

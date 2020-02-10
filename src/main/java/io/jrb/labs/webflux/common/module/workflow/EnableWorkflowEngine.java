@@ -21,17 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.common.module.workflow;
 
-import lombok.Builder;
-import lombok.Value;
+import org.springframework.context.annotation.Import;
 
-@Value
-@Builder
-public class ErrorDTO {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Import(WorkflowModuleJavaConfig.class)
+public @interface EnableWorkflowEngine {
 }

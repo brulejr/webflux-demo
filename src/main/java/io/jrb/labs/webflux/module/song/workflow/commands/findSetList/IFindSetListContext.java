@@ -21,17 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.module.song.workflow.commands.findSetList;
 
-import lombok.Builder;
-import lombok.Value;
+import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
+import io.jrb.labs.webflux.module.song.model.SetListEntity;
 
-@Value
-@Builder
-public class ErrorDTO {
+public interface IFindSetListContext extends IWorkflowContext {
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+    String getSetListName();
+
+    IFindSetListContext setSetListEntity(SetListEntity setList);
 
 }

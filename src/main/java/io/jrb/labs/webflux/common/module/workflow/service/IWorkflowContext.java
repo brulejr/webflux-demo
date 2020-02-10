@@ -21,17 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.common.module.workflow.service;
 
-import lombok.Builder;
-import lombok.Value;
+import io.jrb.labs.webflux.common.module.workflow.model.WorkflowStatus;
 
-@Value
-@Builder
-public class ErrorDTO {
+import java.io.Serializable;
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+public interface IWorkflowContext extends Serializable {
 
+    String getClaimTicket();
+
+    String getWorkflowName();
+
+    WorkflowStatus getStatus();
+
+    IWorkflowContext setStatus(WorkflowStatus status);
 }

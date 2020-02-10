@@ -23,15 +23,25 @@
  */
 package io.jrb.labs.webflux.common.web;
 
-import lombok.Builder;
-import lombok.Value;
+import org.springframework.web.reactive.function.server.RequestPredicate;
+import org.springframework.web.reactive.function.server.ServerRequest;
 
-@Value
-@Builder
-public class ErrorDTO {
+public class CaseInsensitiveRequestPredicate implements RequestPredicate {
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+    private final RequestPredicate target;
+
+    public CaseInsensitiveRequestPredicate(final RequestPredicate target) {
+        this.target = target;
+    }
+
+    @Override
+    public boolean test(final ServerRequest request) {
+        return this.target.test(new LowerCaseUriServerRequestWrapper(request));
+    }
+
+    @Override
+    public String toString() {
+        return this.target.toString();
+    }
 
 }

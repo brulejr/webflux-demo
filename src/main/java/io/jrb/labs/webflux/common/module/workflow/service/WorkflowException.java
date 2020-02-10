@@ -21,17 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.common.module.workflow.service;
 
-import lombok.Builder;
-import lombok.Value;
+import java.util.Optional;
 
-@Value
-@Builder
-public class ErrorDTO {
+public class WorkflowException extends RuntimeException {
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+    private final IWorkflowContext context;
+
+    public WorkflowException(final String message) {
+        super(message);
+        this.context = null;
+    }
+
+    public WorkflowException(final String message, final Throwable cause) {
+        super(message, cause);
+        this.context = null;
+    }
+
+    public WorkflowException(final String message, final Throwable cause, final IWorkflowContext context) {
+        super(message, cause);
+        this.context = context;
+    }
+
+    public Optional<IWorkflowContext> getContext() { return Optional.ofNullable(context); }
 
 }

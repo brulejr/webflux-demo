@@ -28,6 +28,8 @@ dependencies {
 	implementation "io.jsonwebtoken:jjwt-jackson:${JSONWEBTOKEN_VERSION}"
 	implementation "org.apache.commons:commons-lang3"
 	implementation "org.apache.pdfbox:pdfbox:${PDFBOX_VERSION}"
+	implementation "org.apache.poi:poi:${POI_VERSION}"
+	implementation "org.apache.poi:poi-ooxml:${POI_VERSION}"
 	implementation "org.springframework.boot:spring-boot-configuration-processor"
 	implementation "org.springframework.boot:spring-boot-starter-actuator"
 	implementation "org.springframework.boot:spring-boot-starter-data-mongodb-reactive"

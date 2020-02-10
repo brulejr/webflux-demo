@@ -23,15 +23,31 @@
  */
 package io.jrb.labs.webflux.common.web;
 
-import lombok.Builder;
-import lombok.Value;
+import org.springframework.http.server.PathContainer;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.support.ServerRequestWrapper;
 
-@Value
-@Builder
-public class ErrorDTO {
+import java.net.URI;
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+public class LowerCaseUriServerRequestWrapper extends ServerRequestWrapper {
+
+    public LowerCaseUriServerRequestWrapper(final ServerRequest delegate) {
+        super(delegate);
+    }
+
+    @Override
+    public URI uri() {
+        return URI.create(super.uri().toString().toLowerCase());
+    }
+
+    @Override
+    public String path() {
+        return uri().getRawPath();
+    }
+
+    @Override
+    public PathContainer pathContainer() {
+        return PathContainer.parsePath(path());
+    }
 
 }

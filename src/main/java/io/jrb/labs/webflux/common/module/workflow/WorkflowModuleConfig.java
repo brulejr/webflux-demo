@@ -21,17 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.common.module.workflow;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
-@Value
-@Builder
-public class ErrorDTO {
+import java.util.Map;
+import java.util.Optional;
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
+@Accessors(fluent = true) @Getter
+@ConstructorBinding
+@ConfigurationProperties("module.workflow")
+public class WorkflowModuleConfig {
+
+    private final Map<String, String> workflowAliases;
+    private final String claimTicketNumberHeader;
+    private final String baseDirectory;
+
+    public WorkflowModuleConfig(
+            final Map<String, String> workflowAliases,
+            final String claimTicketNumberHeader,
+            final String baseDirectory
+    ) {
+        this.workflowAliases = workflowAliases;
+        this.claimTicketNumberHeader = Optional.ofNullable(claimTicketNumberHeader).orElse("x-claim-ticket-number");
+        this.baseDirectory = baseDirectory;
+    }
 }

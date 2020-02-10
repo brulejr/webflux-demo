@@ -28,10 +28,12 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
 
+import java.io.Serializable;
+
 @Value
 @Builder(toBuilder = true)
 @JsonDeserialize(builder = Source.SourceBuilder.class)
-public class Source {
+public class Source implements Serializable {
 
     private final String sourceId;
 

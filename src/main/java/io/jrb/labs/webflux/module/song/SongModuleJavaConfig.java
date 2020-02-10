@@ -25,6 +25,8 @@ package io.jrb.labs.webflux.module.song;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jrb.labs.webflux.common.module.ModuleJavaConfigSupport;
+import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowService;
+import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowStateRepository;
 import io.jrb.labs.webflux.module.song.demo.SampleDataInitializer;
 import io.jrb.labs.webflux.module.song.model.SetListEntityConverter;
 import io.jrb.labs.webflux.module.song.model.SongEntityConverter;
@@ -36,9 +38,19 @@ import io.jrb.labs.webflux.module.song.service.SetListService;
 import io.jrb.labs.webflux.module.song.service.SongService;
 import io.jrb.labs.webflux.module.song.web.SetListWebHandler;
 import io.jrb.labs.webflux.module.song.web.SongWebHandler;
+import io.jrb.labs.webflux.module.song.workflow.buildSlides.BuildSlidesWorkflowFactory;
+import io.jrb.labs.webflux.module.song.workflow.buildSlides.BuildSlidesWorkflowHandler;
+import io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow.BuildSlideShowCommand;
+import io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow.BuildSlideShowConfig;
+import io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow.IBuildSlideShowCommand;
+import io.jrb.labs.webflux.module.song.workflow.commands.findSetList.FindSetListCommand;
+import io.jrb.labs.webflux.module.song.workflow.commands.findSetList.IFindSetListCommand;
+import io.jrb.labs.webflux.module.song.workflow.commands.findSongsForSetList.FindSongsForSetListCommand;
+import io.jrb.labs.webflux.module.song.workflow.commands.findSongsForSetList.IFindSongsForSetListCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -48,19 +60,64 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.scheduler.Schedulers;
+
+import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.PUT;
+import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Slf4j
 @Configuration
 @ConditionalOnProperty(name = "module.song.enabled")
 @ComponentScan(basePackages = "io.jrb.labs.webflux.module.song.repository")
+@EnableConfigurationProperties(BuildSlideShowConfig.class)
 public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
 
     private static final String MODULE_NAME = "Song";
 
     public SongModuleJavaConfig() {
         super(MODULE_NAME, log);
+    }
+
+    @Bean
+    public BuildSlidesWorkflowHandler buildSlidesWorkflowHandler(final IWorkflowService workflowService) {
+        return new BuildSlidesWorkflowHandler(workflowService, Schedulers.elastic());
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> buildSlidesWorkflowEndpoints(final BuildSlidesWorkflowHandler buildSlidesWorkflowHandler) {
+        return route(POST("/api/v1/workflow/build-slides/{setList}"), buildSlidesWorkflowHandler::runWorkflow);
+    }
+
+    @Bean
+    public BuildSlidesWorkflowFactory buildSlidesWorkflowFactory(
+            final IWorkflowStateRepository workflowStateRepository,
+            final IFindSetListCommand findSetListCommand,
+            final IFindSongsForSetListCommand findSongsForSetListCommand,
+            final IBuildSlideShowCommand buildSlideShowCommand
+    ) {
+        return new BuildSlidesWorkflowFactory(workflowStateRepository, findSetListCommand, findSongsForSetListCommand, buildSlideShowCommand);
+    }
+
+    @Bean
+    public IBuildSlideShowCommand buildSlideShowCommand(
+            final BuildSlideShowConfig config,
+            final ISongService songService
+    ) {
+        return new BuildSlideShowCommand(config, songService);
+    }
+
+    @Bean
+    public IFindSetListCommand findSetListCommand(final ISetListService setListService) {
+        return new FindSetListCommand(setListService);
+    }
+
+    @Bean
+    public IFindSongsForSetListCommand findSongsForSetListCommand(final ISongService songService) {
+        return new FindSongsForSetListCommand(songService);
     }
 
     @Bean
@@ -76,29 +133,24 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
 
     @Bean
     public RouterFunction<ServerResponse> songEndpoints(final SongWebHandler songWebHandler) {
-        return RouterFunctions.route(
-                RequestPredicates
-                        .POST("/song")
+        return route(
+                POST("/song")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::createEntity
         ).andRoute(
-                RequestPredicates
-                        .DELETE("/song/{songId}")
+                DELETE("/song/{songId}")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::deleteEntity
         ).andRoute(
-                RequestPredicates
-                        .GET("/song/{songId}")
+                GET("/song/{songId}")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::getEntity
         ).andRoute(
-                RequestPredicates
-                        .GET("/song")
+                GET("/song")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::retrieveEntities
         ).andRoute(
-                RequestPredicates
-                        .PUT("/song/{songId}")
+                PUT("/song/{songId}")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 songWebHandler::updateEntity
         );
@@ -106,9 +158,8 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
 
     @Bean
     public RouterFunction<ServerResponse> setListEndpoints(final SetListWebHandler setListWebHandler) {
-        return RouterFunctions.route(
-                RequestPredicates
-                        .POST("/setlist")
+        return route(
+                POST("/setlist")
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 setListWebHandler::createEntity
         ).andRoute(

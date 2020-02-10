@@ -21,17 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.common.web;
+package io.jrb.labs.webflux.common.module.workflow.model;
 
 import lombok.Builder;
 import lombok.Value;
 
 @Value
-@Builder
-public class ErrorDTO {
+@Builder(toBuilder = true)
+public class ClaimTicket {
 
-    private final String errorCode;
-    private final String eventType;
-    private final String description;
+    private final String claimTicket;
+    private final WorkflowStatus status;
 
 }

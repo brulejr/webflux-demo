@@ -66,5 +66,21 @@ module:
     demo:
       directories:
         songs: classpath:/data/songs
+    build-slide-show:
+      masterTemplate: classpath:/data/songs/master.pptx
+      blankLayout: Blank
+      fontSize: 38
+      margins:
+        top: 20
+        bottom: 20
+        left: 40
+        right: 40
+      leaderSlides:
+        - Intro
+        - Next Mass
+      trailerSlides:
+        - Blank
+        - Next Mass
   workflow:
+    baseDirectory: ${java.io.tmpdir}
     claimTicketNumberHeader: x-claim-ticket-number
