@@ -12,8 +12,6 @@ spring:
       port: 12345
       validation:
         enabled: false
-  profiles:
-    active: demo
 
 management:
   endpoints:
