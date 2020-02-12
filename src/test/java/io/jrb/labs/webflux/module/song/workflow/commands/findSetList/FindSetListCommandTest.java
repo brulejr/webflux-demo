@@ -71,4 +71,5 @@ public class FindSetListCommandTest {
                         throwable.getMessage().equals(errorMessage)
                 ).verify();
     }
+
 }
