@@ -23,15 +23,6 @@ pipeline {
                         sourcePattern    : 'src/main/java',
                         exclusionPattern : '**/*Test.class'
                     ])
-                    publishHTML([
-                        allowMissing          : false,
-                        alwaysLinkToLastBuild : false,
-                        keepAll               : true,
-                        reportDir             : 'build/asciidoc/html5',
-                        reportFiles           : 'index.html',
-                        reportTitles          : "API Documentation",
-                        reportName            : "API Documentation"
-                    ])
                     sh "gradle clean"
                 }
             }
