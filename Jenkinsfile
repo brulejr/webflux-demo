@@ -17,16 +17,6 @@ pipeline {
                 always {
                     junit "**/build/test-results/test/*.xml"
                     step([
-                        $class         : 'FindBugsPublisher',
-                        pattern        : 'build/reports/findbugs/*.xml',
-                        canRunOnFailed : true
-                    ])
-                    step([
-                        $class         : 'PmdPublisher',
-                        pattern        : 'build/reports/pmd/*.xml',
-                        canRunOnFailed : true
-                    ])
-                    step([
                         $class           : 'JacocoPublisher',
                         execPattern      : 'build/jacoco/jacoco.exec',
                         classPattern     : 'build/classes/main',
