@@ -18,7 +18,13 @@ pipeline {
             steps {
                 sh './gradlew check'
                 junit "**/build/test-results/test/*.xml"
-                jacoco(execPattern: 'ft-build/jacoco/jacocoTest.exec')
+                step([
+                    $class           : 'JacocoPublisher',
+                    execPattern      : 'build/jacoco/jacocoTest.exec',
+                    classPattern     : 'build/classes/main',
+                    sourcePattern    : 'src/main/java',
+                    exclusionPattern : '**/*Test.class'
+                ])
             }
         }
     }
