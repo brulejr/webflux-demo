@@ -26,8 +26,6 @@ package io.jrb.labs.webflux.module.song.workflow.buildSlides;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowService;
 import io.jrb.labs.webflux.common.module.workflow.web.WorkflowHandlerSupport;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Slf4j
 public class BuildSlidesWorkflowHandler extends WorkflowHandlerSupport<BuildSlidesWorkflowContext> {
@@ -38,10 +36,7 @@ public class BuildSlidesWorkflowHandler extends WorkflowHandlerSupport<BuildSlid
                 BuildSlidesWorkflowContext.class,
                 request -> BuildSlidesWorkflowContext.builder()
                     .setListName(request.pathVariable("setList"))
-                    .build(),
-                ctx -> ServerResponse.ok()
-                        .contentType(ctx.getFinalContentType())
-                        .body(BodyInserters.fromValue(ctx.getContent()))
+                    .build()
         );
     }
 

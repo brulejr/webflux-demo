@@ -23,9 +23,12 @@
  */
 package io.jrb.labs.webflux.common.module.workflow.web;
 
+import io.jrb.labs.webflux.common.module.workflow.service.IFinalContentWorkflowContext;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -39,6 +42,29 @@ public class WorkflowHandlerSupport<C extends IWorkflowContext> {
     private final Class<C> workflowContextClass;
     private final Function<ServerRequest, C> initialContextBuilder;
     private final Function<C, Mono<ServerResponse>> responseBuilder;
+
+    public WorkflowHandlerSupport(
+            final IWorkflowService workflowService,
+            final Class<C> workflowContextClass,
+            final Function<ServerRequest, C> initialContextBuilder
+    ) {
+        this.workflowService = workflowService;
+        this.workflowContextClass = workflowContextClass;
+        this.initialContextBuilder = initialContextBuilder;
+        this.responseBuilder = ctx -> {
+            final ServerResponse.BodyBuilder bodyBuilder = ServerResponse.ok();
+            if (ctx instanceof IFinalContentWorkflowContext) {
+                final IFinalContentWorkflowContext<?> fctx = (IFinalContentWorkflowContext<?>) ctx;
+                return bodyBuilder
+                        .contentType(fctx.getFinalContentType())
+                        .body(BodyInserters.fromValue(fctx.getFinalContent()));
+            } else {
+                return bodyBuilder
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(ctx.getStatus());
+            }
+        };
+    }
 
     public WorkflowHandlerSupport(
             final IWorkflowService workflowService,
