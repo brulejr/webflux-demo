@@ -61,7 +61,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.scheduler.Schedulers;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
@@ -84,7 +83,7 @@ public class SongModuleJavaConfig extends ModuleJavaConfigSupport {
 
     @Bean
     public BuildSlidesWorkflowHandler buildSlidesWorkflowHandler(final IWorkflowService workflowService) {
-        return new BuildSlidesWorkflowHandler(workflowService, Schedulers.elastic());
+        return new BuildSlidesWorkflowHandler(workflowService);
     }
 
     @Bean

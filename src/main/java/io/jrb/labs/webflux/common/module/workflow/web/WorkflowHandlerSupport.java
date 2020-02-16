@@ -21,28 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.buildSlides;
+package io.jrb.labs.webflux.common.module.workflow.web;
 
+import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowService;
-import io.jrb.labs.webflux.common.module.workflow.web.WorkflowHandlerSupport;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+import java.util.function.Function;
 
 @Slf4j
-public class BuildSlidesWorkflowHandler extends WorkflowHandlerSupport<BuildSlidesWorkflowContext> {
+public class WorkflowHandlerSupport<C extends IWorkflowContext> {
 
-    public BuildSlidesWorkflowHandler(final IWorkflowService workflowService) {
-        super(
-                workflowService,
-                BuildSlidesWorkflowContext.class,
-                request -> BuildSlidesWorkflowContext.builder()
-                    .setListName(request.pathVariable("setList"))
-                    .build(),
-                ctx -> ServerResponse.ok()
-                        .contentType(ctx.getFinalContentType())
-                        .body(BodyInserters.fromValue(ctx.getContent()))
-        );
+    private final IWorkflowService workflowService;
+    private final Class<C> workflowContextClass;
+    private final Function<ServerRequest, C> initialContextBuilder;
+    private final Function<C, Mono<ServerResponse>> responseBuilder;
+
+    public WorkflowHandlerSupport(
+            final IWorkflowService workflowService,
+            final Class<C> workflowContextClass,
+            final Function<ServerRequest, C> initialContextBuilder,
+            final Function<C, Mono<ServerResponse>> responseBuilder
+    ) {
+        this.workflowService = workflowService;
+        this.workflowContextClass = workflowContextClass;
+        this.initialContextBuilder = initialContextBuilder;
+        this.responseBuilder = responseBuilder;
+    }
+
+    public Mono<ServerResponse> runWorkflow(final ServerRequest request) {
+        final C initialContext = initialContextBuilder.apply(request);
+        return workflowService.runWorkflow(initialContext, workflowContextClass)
+                .flatMap(responseBuilder);
     }
 
 }
