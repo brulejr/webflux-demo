@@ -23,50 +23,23 @@
  */
 package io.jrb.labs.webflux.common.module.workflow.web;
 
-import com.google.common.collect.ImmutableMap;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowService;
-import io.jrb.labs.webflux.common.module.workflow.service.MismatchedClaimTicketException;
-import io.jrb.labs.webflux.common.module.workflow.service.UnknownClaimTicketException;
 import io.jrb.labs.webflux.common.module.workflow.service.WorkflowException;
-import io.jrb.labs.webflux.common.module.workflow.service.WorkflowUserException;
-import io.jrb.labs.webflux.common.web.ErrorDTO;
-import io.jrb.labs.webflux.common.web.ResponseException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.function.Function;
+import static io.jrb.labs.webflux.common.module.workflow.web.WorkflowHandlerUtils.WORKFLOW_EXCEPTION_MAPPER;
+import static io.jrb.labs.webflux.common.module.workflow.web.WorkflowHandlerUtils.claimTicketNumber;
+import static io.jrb.labs.webflux.common.module.workflow.web.WorkflowHandlerUtils.workflowName;
 
-public class WorkflowHandler {
-
-    private static final Function<WorkflowException, ResponseException> WORKFLOW_EXCEPTION_MAPPER = e -> {
-        final ImmutableMap.Builder<String, String> metadataBuilder = ImmutableMap.builder();
-        final ErrorDTO.ErrorDTOBuilder errorBuilder = ErrorDTO.builder()
-                .description(e.getMessage())
-                .eventType("WORKFLOW_ENGINE");
-        if (e instanceof MismatchedClaimTicketException) {
-            metadataBuilder.put("claimTicket", ((MismatchedClaimTicketException) e).getClaimTicketNumber());
-            metadataBuilder.put("workflowName", ((MismatchedClaimTicketException) e).getWorkflowName());
-            errorBuilder.errorCode("WFE-003");
-        } else if (e instanceof UnknownClaimTicketException) {
-            metadataBuilder.put("claimTicket", ((UnknownClaimTicketException) e).getClaimTicketNumber());
-            errorBuilder.errorCode("WFE-002");
-        } else {
-            errorBuilder.errorCode("WFE-001");
-        }
-        return new ResponseException(
-                e instanceof WorkflowUserException ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR,
-                metadataBuilder.build(),
-                errorBuilder.build()
-        );
-    };
+public class CommonWorkflowHandler {
 
     private final IWorkflowService workflowService;
 
-    public WorkflowHandler(final IWorkflowService workflowService) {
+    public CommonWorkflowHandler(final IWorkflowService workflowService) {
         this.workflowService = workflowService;
     }
 
@@ -88,14 +61,6 @@ public class WorkflowHandler {
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(BodyInserters.fromValue(s))
                 );
-    }
-
-    private static String claimTicketNumber(final ServerRequest r) {
-        return r.pathVariable("claimTicketNumber");
-    }
-
-    private static String workflowName(final ServerRequest r) {
-        return r.pathVariable("workflowName");
     }
 
 }

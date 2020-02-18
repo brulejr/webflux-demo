@@ -31,7 +31,7 @@ import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowService;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowStateRepository;
 import io.jrb.labs.webflux.common.module.workflow.service.WorkflowService;
 import io.jrb.labs.webflux.common.module.workflow.service.WorkflowStateDiskStateRepository;
-import io.jrb.labs.webflux.common.module.workflow.web.WorkflowHandler;
+import io.jrb.labs.webflux.common.module.workflow.web.CommonWorkflowHandler;
 import io.jrb.labs.webflux.common.web.CaseInsensitiveRequestPredicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -60,18 +60,18 @@ public class WorkflowModuleJavaConfig extends ModuleJavaConfigSupport {
     }
 
     @Bean
-    public WorkflowHandler workflowHandler(final IWorkflowService workflowService) {
-        return new WorkflowHandler(workflowService);
+    public CommonWorkflowHandler commonWorkflowHandler(final IWorkflowService workflowService) {
+        return new CommonWorkflowHandler(workflowService);
     }
 
     @Bean
-    public RouterFunction<ServerResponse> workflowRoutes(final WorkflowHandler handler) {
+    public RouterFunction<ServerResponse> workflowRoutes(final CommonWorkflowHandler commonWorkflowHandler) {
         return route(
                 i(DELETE("/api/v1/workflow/{workflowName}/{claimTicketNumber}")),
-                handler::deleteWorkflowContext
+                commonWorkflowHandler::deleteWorkflowContext
         ).andRoute(
                 i(GET("/api/v1/workflow/{workflowName}/{claimTicketNumber}/status")),
-                handler::getWorkflowStatus
+                commonWorkflowHandler::getWorkflowStatus
         );
     }
 

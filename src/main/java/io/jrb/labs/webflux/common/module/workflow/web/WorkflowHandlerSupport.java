@@ -26,6 +26,7 @@ package io.jrb.labs.webflux.common.module.workflow.web;
 import io.jrb.labs.webflux.common.module.workflow.service.IFinalContentWorkflowContext;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowService;
+import io.jrb.labs.webflux.common.module.workflow.service.WorkflowException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -34,6 +35,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
+
+import static io.jrb.labs.webflux.common.module.workflow.web.WorkflowHandlerUtils.WORKFLOW_EXCEPTION_MAPPER;
 
 @Slf4j
 public class WorkflowHandlerSupport<C extends IWorkflowContext> {
@@ -81,6 +84,7 @@ public class WorkflowHandlerSupport<C extends IWorkflowContext> {
     public Mono<ServerResponse> runWorkflow(final ServerRequest request) {
         final C initialContext = initialContextBuilder.apply(request);
         return workflowService.runWorkflow(initialContext, workflowContextClass)
+                .onErrorMap(WorkflowException.class, WORKFLOW_EXCEPTION_MAPPER)
                 .flatMap(responseBuilder);
     }
 
