@@ -32,21 +32,19 @@ import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowStateReposito
 import io.jrb.labs.webflux.common.module.workflow.service.WorkflowService;
 import io.jrb.labs.webflux.common.module.workflow.service.WorkflowStateDiskStateRepository;
 import io.jrb.labs.webflux.common.module.workflow.web.CommonWorkflowHandler;
-import io.jrb.labs.webflux.common.web.CaseInsensitiveRequestPredicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.server.RequestPredicate;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import java.util.Map;
 import java.util.Optional;
 
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Slf4j
 @Configuration
@@ -67,10 +65,10 @@ public class WorkflowModuleJavaConfig extends ModuleJavaConfigSupport {
     @Bean
     public RouterFunction<ServerResponse> workflowRoutes(final CommonWorkflowHandler commonWorkflowHandler) {
         return route(
-                i(DELETE("/api/v1/workflow/{workflowName}/{claimTicketNumber}")),
+                DELETE("/api/v1/workflow/{workflowName}/{claimTicketNumber}"),
                 commonWorkflowHandler::deleteWorkflowContext
         ).andRoute(
-                i(GET("/api/v1/workflow/{workflowName}/{claimTicketNumber}/status")),
+                GET("/api/v1/workflow/{workflowName}/{claimTicketNumber}/status"),
                 commonWorkflowHandler::getWorkflowStatus
         );
     }
@@ -89,10 +87,6 @@ public class WorkflowModuleJavaConfig extends ModuleJavaConfigSupport {
     @Bean
     public IWorkflowStateRepository workflowStateRepository(final WorkflowModuleConfig workflowModuleConfig) {
         return new WorkflowStateDiskStateRepository(workflowModuleConfig.baseDirectory());
-    }
-
-    private static RequestPredicate i(final RequestPredicate target) {
-        return new CaseInsensitiveRequestPredicate(target);
     }
 
 }
