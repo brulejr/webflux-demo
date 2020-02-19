@@ -21,14 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.commands.findSongsForSetList;
+package io.jrb.labs.webflux.module.song.config;
 
-import io.jrb.labs.webflux.common.module.workflow.service.ICommand;
-import reactor.core.publisher.Mono;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
-public interface IFindSongsForSetListCommand extends ICommand<IFindSongsForSetListContext> {
+import java.util.Map;
 
-    @Override
-    Mono<IFindSongsForSetListContext> run(IFindSongsForSetListContext context);
+@Accessors(fluent = true) @Getter
+@AllArgsConstructor
+@ConstructorBinding
+@ConfigurationProperties("module.song")
+public class SongModuleConfig {
+
+    private final Map<String, String> resources;
 
 }

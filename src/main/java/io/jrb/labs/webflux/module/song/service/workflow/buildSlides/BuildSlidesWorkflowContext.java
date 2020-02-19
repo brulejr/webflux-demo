@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.buildSlides;
+package io.jrb.labs.webflux.module.song.service.workflow.buildSlides;
 
 import io.jrb.labs.webflux.common.module.workflow.model.WorkflowStatus;
 import io.jrb.labs.webflux.common.module.workflow.service.IFinalContentWorkflowContext;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
 import io.jrb.labs.webflux.module.song.model.SetListEntity;
 import io.jrb.labs.webflux.module.song.model.SongEntity;
-import io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow.IBuildSlideShowContext;
-import io.jrb.labs.webflux.module.song.workflow.commands.findSetList.IFindSetListContext;
-import io.jrb.labs.webflux.module.song.workflow.commands.findSongsForSetList.IFindSongsForSetListContext;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.buildSlideShow.IBuildSlideShowContext;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.findSetList.IFindSetListContext;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.findSongsForSetList.IFindSongsForSetListContext;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;

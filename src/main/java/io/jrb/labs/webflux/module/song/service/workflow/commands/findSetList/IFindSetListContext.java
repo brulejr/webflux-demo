@@ -21,41 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow;
+package io.jrb.labs.webflux.module.song.service.workflow.commands.findSetList;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Accessors;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
-import org.springframework.core.io.Resource;
+import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
+import io.jrb.labs.webflux.module.song.model.SetListEntity;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+public interface IFindSetListContext extends IWorkflowContext {
 
-@Accessors(fluent = true) @Getter
-@AllArgsConstructor
-@ConstructorBinding
-@ConfigurationProperties("module.song.build-slide-show")
-public class BuildSlideShowConfig {
+    String getSetListName();
 
-    private final String blankLayout;
-    private final double fontSize;
-    private final String[] leaderSlides;
-    private final Margins margins;
-    private final Resource masterTemplate;
-    private final String[] trailerSlides;
-
-    @Accessors(fluent = true) @Getter
-    @AllArgsConstructor
-    @ConstructorBinding
-    public static class Margins {
-        private final int top;
-        private final int bottom;
-        private final int left;
-        private final int right;
-
-    }
+    IFindSetListContext setSetListEntity(SetListEntity setList);
 
 }

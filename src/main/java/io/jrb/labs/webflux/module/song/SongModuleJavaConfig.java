@@ -25,12 +25,17 @@ package io.jrb.labs.webflux.module.song;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jrb.labs.webflux.common.module.ModuleJavaConfigSupport;
+import io.jrb.labs.webflux.module.song.config.BuildSlidesWorkflowJavaConfig;
+import io.jrb.labs.webflux.module.song.config.SetListServiceJavaConfig;
+import io.jrb.labs.webflux.module.song.config.SongModuleConfig;
+import io.jrb.labs.webflux.module.song.config.SongServiceJavaConfig;
 import io.jrb.labs.webflux.module.song.demo.SampleDataInitializer;
 import io.jrb.labs.webflux.module.song.model.SongEntityConverter;
 import io.jrb.labs.webflux.module.song.repository.ReactiveSongRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +47,7 @@ import org.springframework.core.io.Resource;
 @Configuration
 @ConditionalOnProperty(name = "module.song.enabled")
 @ComponentScan(basePackages = "io.jrb.labs.webflux.module.song.repository")
+@EnableConfigurationProperties(SongModuleConfig.class)
 @Import({
         BuildSlidesWorkflowJavaConfig.class,
         SetListServiceJavaConfig.class,

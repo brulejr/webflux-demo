@@ -21,14 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.commands.findSetList;
+package io.jrb.labs.webflux.module.song.service.workflow.commands.findSongsForSetList;
 
-import io.jrb.labs.webflux.common.module.workflow.service.ICommand;
+import io.jrb.labs.webflux.module.song.model.SetListEntity;
+import io.jrb.labs.webflux.module.song.model.SongEntity;
+import io.jrb.labs.webflux.module.song.service.ISongService;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface IFindSetListCommand extends ICommand<IFindSetListContext> {
+import java.util.HashMap;
+import java.util.function.Supplier;
+
+public class FindSongsForSetListCommand implements IFindSongsForSetListCommand {
+
+    private final ISongService songService;
+
+    public FindSongsForSetListCommand(final ISongService songService) {
+        this.songService = songService;
+    }
 
     @Override
-    Mono<IFindSetListContext> run(IFindSetListContext context);
+    public Mono<IFindSongsForSetListContext> run(final IFindSongsForSetListContext context) {
+        final SetListEntity setList = context.getSetListEntity();
+        return Mono.just(setList.getSongs())
+                .flatMapMany(Flux::fromIterable)
+                .flatMap(songService::findByTitle)
+                .collect(
+                        (Supplier<HashMap<String, SongEntity>>) HashMap::new,
+                        (map, song) -> map.put(song.getTitle(), song)
+                )
+                .map(context::setSongs);
+    }
 
 }

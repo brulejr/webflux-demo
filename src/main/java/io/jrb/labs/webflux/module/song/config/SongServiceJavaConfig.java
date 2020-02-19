@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song;
+package io.jrb.labs.webflux.module.song.config;
 
-import io.jrb.labs.webflux.module.song.model.SetListEntityConverter;
-import io.jrb.labs.webflux.module.song.repository.ReactiveSetListRepository;
-import io.jrb.labs.webflux.module.song.service.ISetListService;
-import io.jrb.labs.webflux.module.song.service.SetListService;
-import io.jrb.labs.webflux.module.song.web.SetListWebHandler;
+import io.jrb.labs.webflux.module.song.model.SongEntityConverter;
+import io.jrb.labs.webflux.module.song.repository.ReactiveSongRepository;
+import io.jrb.labs.webflux.module.song.service.ISongService;
+import io.jrb.labs.webflux.module.song.service.SongService;
+import io.jrb.labs.webflux.module.song.web.SongWebHandler;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,56 +36,60 @@ import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.PUT;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
-public class SetListServiceJavaConfig {
+public class SongServiceJavaConfig {
 
     @Bean
-    public RouterFunction<ServerResponse> setListEndpoints(final SetListWebHandler setListWebHandler) {
+    public RouterFunction<ServerResponse> songEndpoints(
+            final SongModuleConfig songModuleConfig,
+            final SongWebHandler songWebHandler
+    ) {
+        final String baseResource = songModuleConfig.resources().getOrDefault("song", "/song");
+        final String individualResource = baseResource + "/{songId}";
         return route(
-                POST("/setlist")
+                POST(baseResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                setListWebHandler::createEntity
+                songWebHandler::createEntity
         ).andRoute(
-                RequestPredicates
-                        .DELETE("/setlist/{setlistId}")
+                DELETE(individualResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                setListWebHandler::deleteEntity
+                songWebHandler::deleteEntity
         ).andRoute(
-                RequestPredicates
-                        .GET("/setlist/{setlistId}")
+                GET(individualResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                setListWebHandler::getEntity
+                songWebHandler::getEntity
         ).andRoute(
-                RequestPredicates
-                        .GET("/setlist")
+                GET(baseResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                setListWebHandler::retrieveEntities
+                songWebHandler::retrieveEntities
         ).andRoute(
-                RequestPredicates
-                        .PUT("/setlist/{setlistId}")
+                PUT(individualResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                setListWebHandler::updateEntity
+                songWebHandler::updateEntity
         );
     }
 
     @Bean
-    public SetListEntityConverter setListEntityConverter() { return new SetListEntityConverter(); }
+    public SongEntityConverter songEntityConverter() { return new SongEntityConverter(); }
 
     @Bean
-    public SetListWebHandler setListWebHandler(
-            final ISetListService setListService,
-            final SetListEntityConverter setListEntityConverter
+    public SongWebHandler songWebHandler(
+            final ISongService songService,
+            final SongEntityConverter songEntityConverter
     ) {
-        return new SetListWebHandler(setListService, setListEntityConverter);
+        return new SongWebHandler(songService, songEntityConverter);
     }
 
     @Bean
-    public ISetListService setListService(
-            final ApplicationEventPublisher publisher, final ReactiveSetListRepository setListRepository) {
-        return new SetListService(publisher, setListRepository);
+    public ISongService songService(
+            final ApplicationEventPublisher publisher, final ReactiveSongRepository songRepository) {
+        return new SongService(publisher, songRepository);
     }
 
 }

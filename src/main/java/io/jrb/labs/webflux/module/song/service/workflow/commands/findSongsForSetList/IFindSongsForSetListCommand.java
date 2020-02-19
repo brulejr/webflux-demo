@@ -21,23 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow;
+package io.jrb.labs.webflux.module.song.service.workflow.commands.findSongsForSetList;
 
-import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
-import io.jrb.labs.webflux.module.song.model.SetListEntity;
-import io.jrb.labs.webflux.module.song.model.SongEntity;
-import org.springframework.http.MediaType;
+import io.jrb.labs.webflux.common.module.workflow.service.ICommand;
+import reactor.core.publisher.Mono;
 
-import java.util.Map;
+public interface IFindSongsForSetListCommand extends ICommand<IFindSongsForSetListContext> {
 
-public interface IBuildSlideShowContext extends IWorkflowContext {
-
-    SetListEntity getSetListEntity();
-
-    Map<String, SongEntity> getSongs();
-
-    IBuildSlideShowContext setContent(byte[] content);
-
-    IBuildSlideShowContext setContentType(MediaType contentType);
+    @Override
+    Mono<IFindSongsForSetListContext> run(IFindSongsForSetListContext context);
 
 }

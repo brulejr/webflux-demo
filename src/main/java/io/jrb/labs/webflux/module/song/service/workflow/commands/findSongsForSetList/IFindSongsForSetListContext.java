@@ -21,25 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.commands.findSetList;
+package io.jrb.labs.webflux.module.song.service.workflow.commands.findSongsForSetList;
 
-import io.jrb.labs.webflux.module.song.service.ISetListService;
-import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Mono;
+import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
+import io.jrb.labs.webflux.module.song.model.SetListEntity;
+import io.jrb.labs.webflux.module.song.model.SongEntity;
 
-@Slf4j
-public class FindSetListCommand implements IFindSetListCommand {
+import java.util.Map;
 
-    private final ISetListService setListService;
+public interface IFindSongsForSetListContext extends IWorkflowContext {
 
-    public FindSetListCommand(final ISetListService setListService) {
-        this.setListService = setListService;
-    }
+    SetListEntity getSetListEntity();
 
-    @Override
-    public Mono<IFindSetListContext> run(final IFindSetListContext context) {
-        return setListService.findByName(context.getSetListName())
-                .map(context::setSetListEntity);
-    }
+    IFindSongsForSetListContext setSongs(Map<String, SongEntity> songs);
 
 }

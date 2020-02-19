@@ -1,11 +1,11 @@
-package io.jrb.labs.webflux.module.song.workflow.commands.findSongsForSetList;
+package io.jrb.labs.webflux.module.song.service.workflow.commands.findSongsForSetList;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.jrb.labs.webflux.module.song.model.SetListEntity;
 import io.jrb.labs.webflux.module.song.model.SongEntity;
 import io.jrb.labs.webflux.module.song.service.ISongService;
-import io.jrb.labs.webflux.module.song.workflow.buildSlides.BuildSlidesWorkflowContext;
+import io.jrb.labs.webflux.module.song.service.workflow.buildSlides.BuildSlidesWorkflowContext;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

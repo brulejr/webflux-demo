@@ -65,6 +65,9 @@ module:
     demo:
       directories:
         songs: classpath:/data/songs
+    resources:
+      song: /api/v1/song
+      setlist: /api/v1/setlist
     build-slide-show:
       masterTemplate: classpath:/data/songs/master.pptx
       blankLayout: Blank

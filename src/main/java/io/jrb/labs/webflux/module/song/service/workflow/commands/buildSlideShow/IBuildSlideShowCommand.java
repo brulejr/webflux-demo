@@ -21,15 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.commands.findSetList;
+package io.jrb.labs.webflux.module.song.service.workflow.commands.buildSlideShow;
 
-import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowContext;
-import io.jrb.labs.webflux.module.song.model.SetListEntity;
+import io.jrb.labs.webflux.common.module.workflow.service.ICommand;
+import reactor.core.publisher.Mono;
 
-public interface IFindSetListContext extends IWorkflowContext {
+public interface IBuildSlideShowCommand extends ICommand<IBuildSlideShowContext> {
 
-    String getSetListName();
-
-    IFindSetListContext setSetListEntity(SetListEntity setList);
+    @Override
+    Mono<IBuildSlideShowContext> run(IBuildSlideShowContext context);
 
 }

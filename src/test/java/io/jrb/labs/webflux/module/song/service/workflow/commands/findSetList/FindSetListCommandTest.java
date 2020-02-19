@@ -1,8 +1,8 @@
-package io.jrb.labs.webflux.module.song.workflow.commands.findSetList;
+package io.jrb.labs.webflux.module.song.service.workflow.commands.findSetList;
 
 import io.jrb.labs.webflux.module.song.model.SetListEntity;
 import io.jrb.labs.webflux.module.song.service.ISetListService;
-import io.jrb.labs.webflux.module.song.workflow.buildSlides.BuildSlidesWorkflowContext;
+import io.jrb.labs.webflux.module.song.service.workflow.buildSlides.BuildSlidesWorkflowContext;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

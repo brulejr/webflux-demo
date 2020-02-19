@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow;
+package io.jrb.labs.webflux.module.song.service.workflow.commands.buildSlideShow;
 
 import io.jrb.labs.webflux.common.poi.POIUtils;
 import io.jrb.labs.webflux.module.song.model.SongEntity;

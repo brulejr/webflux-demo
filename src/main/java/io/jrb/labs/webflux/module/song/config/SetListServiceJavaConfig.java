@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song;
+package io.jrb.labs.webflux.module.song.config;
 
-import io.jrb.labs.webflux.module.song.model.SongEntityConverter;
-import io.jrb.labs.webflux.module.song.repository.ReactiveSongRepository;
-import io.jrb.labs.webflux.module.song.service.ISongService;
-import io.jrb.labs.webflux.module.song.service.SongService;
-import io.jrb.labs.webflux.module.song.web.SongWebHandler;
+import io.jrb.labs.webflux.module.song.model.SetListEntityConverter;
+import io.jrb.labs.webflux.module.song.repository.ReactiveSetListRepository;
+import io.jrb.labs.webflux.module.song.service.ISetListService;
+import io.jrb.labs.webflux.module.song.service.SetListService;
+import io.jrb.labs.webflux.module.song.web.SetListWebHandler;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,48 +43,53 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
-public class SongServiceJavaConfig {
+public class SetListServiceJavaConfig {
 
     @Bean
-    public RouterFunction<ServerResponse> songEndpoints(final SongWebHandler songWebHandler) {
+    public RouterFunction<ServerResponse> setListEndpoints(
+            final SongModuleConfig songModuleConfig,
+            final SetListWebHandler setListWebHandler
+    ) {
+        final String baseResource = songModuleConfig.resources().getOrDefault("setlist", "/setlist");
+        final String individualResource = baseResource + "/{setlistId}";
         return route(
-                POST("/song")
+                POST(baseResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::createEntity
+                setListWebHandler::createEntity
         ).andRoute(
-                DELETE("/song/{songId}")
+                DELETE(individualResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::deleteEntity
+                setListWebHandler::deleteEntity
         ).andRoute(
-                GET("/song/{songId}")
+                GET(baseResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::getEntity
+                setListWebHandler::getEntity
         ).andRoute(
-                GET("/song")
+                GET(baseResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::retrieveEntities
+                setListWebHandler::retrieveEntities
         ).andRoute(
-                PUT("/song/{songId}")
+                PUT(individualResource)
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                songWebHandler::updateEntity
+                setListWebHandler::updateEntity
         );
     }
 
     @Bean
-    public SongEntityConverter songEntityConverter() { return new SongEntityConverter(); }
+    public SetListEntityConverter setListEntityConverter() { return new SetListEntityConverter(); }
 
     @Bean
-    public SongWebHandler songWebHandler(
-            final ISongService songService,
-            final SongEntityConverter songEntityConverter
+    public SetListWebHandler setListWebHandler(
+            final ISetListService setListService,
+            final SetListEntityConverter setListEntityConverter
     ) {
-        return new SongWebHandler(songService, songEntityConverter);
+        return new SetListWebHandler(setListService, setListEntityConverter);
     }
 
     @Bean
-    public ISongService songService(
-            final ApplicationEventPublisher publisher, final ReactiveSongRepository songRepository) {
-        return new SongService(publisher, songRepository);
+    public ISetListService setListService(
+            final ApplicationEventPublisher publisher, final ReactiveSetListRepository setListRepository) {
+        return new SetListService(publisher, setListRepository);
     }
 
 }

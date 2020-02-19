@@ -21,21 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song;
+package io.jrb.labs.webflux.module.song.config;
 
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowService;
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowStateRepository;
 import io.jrb.labs.webflux.module.song.service.ISetListService;
 import io.jrb.labs.webflux.module.song.service.ISongService;
-import io.jrb.labs.webflux.module.song.workflow.buildSlides.BuildSlidesWorkflowFactory;
-import io.jrb.labs.webflux.module.song.workflow.buildSlides.BuildSlidesWorkflowHandler;
-import io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow.BuildSlideShowCommand;
-import io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow.BuildSlideShowConfig;
-import io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow.IBuildSlideShowCommand;
-import io.jrb.labs.webflux.module.song.workflow.commands.findSetList.FindSetListCommand;
-import io.jrb.labs.webflux.module.song.workflow.commands.findSetList.IFindSetListCommand;
-import io.jrb.labs.webflux.module.song.workflow.commands.findSongsForSetList.FindSongsForSetListCommand;
-import io.jrb.labs.webflux.module.song.workflow.commands.findSongsForSetList.IFindSongsForSetListCommand;
+import io.jrb.labs.webflux.module.song.service.workflow.buildSlides.BuildSlidesWorkflowFactory;
+import io.jrb.labs.webflux.module.song.service.workflow.buildSlides.BuildSlidesWorkflowHandler;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.buildSlideShow.BuildSlideShowCommand;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.buildSlideShow.BuildSlideShowConfig;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.buildSlideShow.IBuildSlideShowCommand;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.findSetList.FindSetListCommand;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.findSetList.IFindSetListCommand;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.findSongsForSetList.FindSongsForSetListCommand;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.findSongsForSetList.IFindSongsForSetListCommand;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

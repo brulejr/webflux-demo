@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.buildSlides;
+package io.jrb.labs.webflux.module.song.service.workflow.buildSlides;
 
 import io.jrb.labs.webflux.common.module.workflow.service.IWorkflowStateRepository;
 import io.jrb.labs.webflux.common.module.workflow.service.WorkflowFactorySupport;
-import io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow.IBuildSlideShowCommand;
-import io.jrb.labs.webflux.module.song.workflow.commands.findSetList.IFindSetListCommand;
-import io.jrb.labs.webflux.module.song.workflow.commands.findSongsForSetList.IFindSongsForSetListCommand;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.buildSlideShow.IBuildSlideShowCommand;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.findSetList.IFindSetListCommand;
+import io.jrb.labs.webflux.module.song.service.workflow.commands.findSongsForSetList.IFindSongsForSetListCommand;
 import reactor.core.publisher.Mono;
 
 import static io.jrb.labs.webflux.common.validation.Validation.required;

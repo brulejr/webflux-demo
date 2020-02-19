@@ -21,14 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.jrb.labs.webflux.module.song.workflow.commands.buildSlideShow;
+package io.jrb.labs.webflux.module.song.service.workflow.commands.buildSlideShow;
 
-import io.jrb.labs.webflux.common.module.workflow.service.ICommand;
-import reactor.core.publisher.Mono;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.core.io.Resource;
 
-public interface IBuildSlideShowCommand extends ICommand<IBuildSlideShowContext> {
+@Accessors(fluent = true) @Getter
+@AllArgsConstructor
+@ConstructorBinding
+@ConfigurationProperties("module.song.build-slide-show")
+public class BuildSlideShowConfig {
 
-    @Override
-    Mono<IBuildSlideShowContext> run(IBuildSlideShowContext context);
+    private final String blankLayout;
+    private final double fontSize;
+    private final String[] leaderSlides;
+    private final Margins margins;
+    private final Resource masterTemplate;
+    private final String[] trailerSlides;
+
+    @Accessors(fluent = true) @Getter
+    @AllArgsConstructor
+    @ConstructorBinding
+    public static class Margins {
+        private final int top;
+        private final int bottom;
+        private final int left;
+        private final int right;
+
+    }
 
 }
