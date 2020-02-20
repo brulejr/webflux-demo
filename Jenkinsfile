@@ -23,6 +23,11 @@ pipeline {
                 )
             }
         }
+        stage ('Docker') {
+            steps {
+                sh './gradlew jibDockerBuild'
+            }
+        }
     }
 
 }
