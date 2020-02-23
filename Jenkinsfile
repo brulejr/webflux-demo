@@ -1,5 +1,10 @@
 pipeline {
 
+    environment {
+        registry = "brulejr/webflux-demo"
+        registryCredential = 'dockerhub'
+    }
+
     agent any
 
     stages {
