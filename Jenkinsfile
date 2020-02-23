@@ -1,10 +1,5 @@
 pipeline {
 
-    environment {
-        registry = "brulejr/webflux-demo"
-        registryCredential = 'dockerhub'
-    }
-
     agent any
 
     stages {
@@ -29,8 +24,11 @@ pipeline {
             }
         }
         stage ('Docker') {
+            environment {
+                DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+            }
             steps {
-                sh './gradlew jib'
+                sh "./gradlew jib"
             }
         }
     }

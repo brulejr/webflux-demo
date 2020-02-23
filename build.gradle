@@ -58,5 +58,10 @@ test {
 jib {
 	to {
 		image "brulejr/webflux-demo"
+		auth {
+			// retrieve from Jenkins
+			username "${System.env.DOCKERHUB_CREDENTIALS_USR}"
+			password "${System.env.DOCKERHUB_CREDENTIALS_PSW}"
+		}
 	}
 }
