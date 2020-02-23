@@ -57,6 +57,6 @@ test {
 
 jib {
 	to {
-		image "io.jrb.labs/webflux-demo"
+		image "hub.docker.com/brulejr/webflux-demo"
 	}
 }
