@@ -1,7 +1,7 @@
 plugins {
 	id 'org.springframework.boot' version '2.2.4.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-	id 'com.palantir.docker' version '0.21.0'
+	id 'com.google.cloud.tools.jib' version '1.8.0'
 	id 'java'
 	id 'jacoco'
 }
@@ -55,14 +55,8 @@ test {
 	}
 }
 
-task unpack(type: Copy) {
-	dependsOn bootJar
-	from(zipTree(tasks.bootJar.outputs.files.singleFile))
-	into("build/dependency")
-}
-
-docker {
-	name  "io.jrb.labs/webflux-demo"
-	copySpec.from(tasks.unpack.outputs).into("dependency")
-	buildArgs(['DEPENDENCY': "dependency"])
+jib {
+	to {
+		image "io.jrb.labs/webflux-demo"
+	}
 }
