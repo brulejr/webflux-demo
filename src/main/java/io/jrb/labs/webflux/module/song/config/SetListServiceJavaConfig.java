@@ -61,7 +61,11 @@ public class SetListServiceJavaConfig {
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 setListWebHandler::deleteEntity
         ).andRoute(
-                GET(baseResource)
+                GET(individualResource
+
+
+
+                )
                         .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                 setListWebHandler::getEntity
         ).andRoute(
